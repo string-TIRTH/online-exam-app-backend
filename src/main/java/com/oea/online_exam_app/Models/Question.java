@@ -25,7 +25,7 @@ public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
     private int questionId;
-
+     
     private String questionText;
 
     @ManyToOne

@@ -6,6 +6,7 @@
 package com.oea.online_exam_app.Models;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,13 +33,14 @@ public class QuestionOption {
     @JoinColumn(name = "question_id", referencedColumnName = "questionId", nullable = false) 
     private Question question;  
 
-    private String option;
+    private String optionText;
+    @Column(name = "is_correct")
     private Boolean isCorrect;
 
     public QuestionOption(){}
 
-    public QuestionOption(String option,Boolean isCorrect,Question question){
-        this.option = option;
+    public QuestionOption(String optionText,Boolean isCorrect,Question question){
+        this.optionText = optionText;
         this.isCorrect = isCorrect;
         this.question = question;
     }

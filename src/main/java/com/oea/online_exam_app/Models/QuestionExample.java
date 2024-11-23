@@ -20,7 +20,7 @@ import lombok.Data;
  * @author tirth
  */
 @Entity
-@Table(name="question_example_master")
+@Table(name="question_example")
 @Data
 public class QuestionExample {
     @Id
