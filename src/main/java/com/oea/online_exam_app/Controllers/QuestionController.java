@@ -211,7 +211,6 @@ public class QuestionController {
                     .body(new CreateQuestionResponse("failed", "Error: " + e.getMessage()));
         }
     }
-
     private <T> void validateQuestionOptions(List<T> options, Function<T, Boolean> isCorrectExtractor) {
         if (options == null || options.isEmpty()) {
             throw new IllegalArgumentException("MCQ questions must have options.");
@@ -220,7 +219,6 @@ public class QuestionController {
             throw new IllegalArgumentException("MCQ questions must have at least one correct option.");
         }
     }
-
     private <T> void validateQuestionExamples(List<T> examples) {
         if (examples == null || examples.isEmpty()) {
             throw new IllegalArgumentException("Programming questions must have examples.");

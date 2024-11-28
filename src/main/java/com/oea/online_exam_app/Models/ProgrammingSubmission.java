@@ -28,7 +28,7 @@ public class ProgrammingSubmission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "programming_submission_id")
-    private Long programmingSubmissionId;
+    private int programmingSubmissionId;
 
     @ManyToOne
     @JoinColumn(name = "exam_submission_id", nullable = false)

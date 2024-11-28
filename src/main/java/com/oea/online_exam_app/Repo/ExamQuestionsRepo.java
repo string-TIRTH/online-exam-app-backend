@@ -10,7 +10,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.oea.online_exam_app.Models.Category;
+import com.oea.online_exam_app.Models.ExamQuestions;
 
 
 /**
@@ -18,7 +18,6 @@ import com.oea.online_exam_app.Models.Category;
  * @author tirth
  */
 @Repository
-public interface CategoryRepo extends JpaRepository<Category, Integer> {
-    Optional<Category> findById(int id);
-    Optional<Category> findByCategoryText(String categoryText);
+public interface ExamQuestionsRepo extends JpaRepository<ExamQuestions, Integer> {
+    Optional<ExamQuestions> findById(int id);
 }

@@ -31,7 +31,7 @@ public class ExamSubmission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "exam_submission_id")
-    private Long examSubmissionId;
+    private int examSubmissionId;
 
     @ManyToOne
     @JoinColumn(name = "exam_id", nullable = false)

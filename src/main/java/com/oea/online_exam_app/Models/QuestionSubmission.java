@@ -28,7 +28,7 @@ public class QuestionSubmission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "question_submission_id")
-    private Long questionSubmissionId;
+    private int questionSubmissionId;
 
     @ManyToOne
     @JoinColumn(name = "question_id", nullable = false)

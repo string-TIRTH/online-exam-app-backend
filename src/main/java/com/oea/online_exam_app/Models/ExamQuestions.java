@@ -31,7 +31,7 @@ public class ExamQuestions {
 @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "exam_question_id")
-    private Integer examQuestionId;
+    private int examQuestionId;
 
     @ManyToOne
     @JoinColumn(name = "exam_id", nullable = false)

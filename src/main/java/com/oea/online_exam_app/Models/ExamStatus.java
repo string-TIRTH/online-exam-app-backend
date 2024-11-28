@@ -26,7 +26,7 @@ public class ExamStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "exam_status_id")
-    private Long examStatusId;
+    private int examStatusId;
 
     @Column(name = "exam_status_txt", nullable = false)
     private String examStatusText;
