@@ -42,13 +42,15 @@ public class QuestionSubmission {
     @JoinColumn(name = "exam_submission_id", nullable = false)
     private ExamSubmission examSubmission;
 
-    private Long selectedOptionId;
+    @ManyToOne
+    @JoinColumn(name = "question_option", nullable = false)
+    private QuestionOption selectedOption;
 
-    public QuestionSubmission(Question question, User user, ExamSubmission examSubmission, Long selectedOptionId) {
+    public QuestionSubmission(Question question, User user, ExamSubmission examSubmission, int selectedOptionId,QuestionOption selectedOption) {
         this.question = question;
         this.user = user;
         this.examSubmission = examSubmission;
-        this.selectedOptionId = selectedOptionId;
+        this.selectedOption = selectedOption;
     }
 
 }

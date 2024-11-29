@@ -8,6 +8,7 @@ package com.oea.online_exam_app.IServices;
 import java.util.List;
 
 import com.oea.online_exam_app.Models.Exam;
+import com.oea.online_exam_app.Models.ExamQuestions;
 import com.oea.online_exam_app.Models.Question;
 
 /**
@@ -15,8 +16,8 @@ import com.oea.online_exam_app.Models.Question;
  * @author tirth
  */
 public interface IExamQuestionsService {
-    public int createExamQuestion(Question question,Exam exam);
-    public int createExamQuestions(List<Question> questions,Exam exam);
-    public int updateExamQuestions(int examQuestionId, Question question);
+    public int createExamQuestion(Exam exam, Question Question);
+    public int createExamQuestions(Exam exam, List<Question> Question);
+    public int updateExamQuestions(int examQuestionId, ExamQuestions examQuestion);
     public int deleteExam(int examQuestionId);
 }

@@ -15,6 +15,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,8 +40,6 @@ import com.oea.online_exam_app.Responses.Question.CreateQuestionResponse;
 import com.oea.online_exam_app.Services.QuestionExampleService;
 import com.oea.online_exam_app.Services.QuestionOptionService;
 import com.oea.online_exam_app.Services.QuestionService;
-
-import jakarta.transaction.Transactional;
 
 /**
  *
@@ -134,7 +133,7 @@ public class QuestionController {
     }
 
     @PostMapping("/create/bulk")
-    @Transactional 
+    @Transactional
     public ResponseEntity<CreateQuestionResponse> createQuestion(@RequestParam("file") MultipartFile file) {
         try {
             if (file.isEmpty()) {

@@ -43,6 +43,7 @@ public class ExamService implements IExamService{
                 existingExam.setPassingCriteria(exam.getPassingCriteria());
                 existingExam.setPassingValue(exam.getPassingValue());
                 existingExam.setExamDate(exam.getExamDate());
+                existingExam.setTotalMarks(exam.getTotalMarks());
                 examRepo.save(existingExam);
                 return existingExam.getExamId();
             }

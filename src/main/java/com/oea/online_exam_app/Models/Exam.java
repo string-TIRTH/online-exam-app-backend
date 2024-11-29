@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 public class Exam {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer examId;
+    private int examId;
 
     private String examCode;
 
@@ -37,12 +37,14 @@ public class Exam {
 
     private LocalDateTime examEndTime;
 
-    private Integer examDurationInMinutes;
+    private int examDurationInMinutes;
 
-    private Integer passingCriteria;
+    private int passingCriteria;
 
-    private Integer passingValue;
-    public Exam(String examCode, LocalDate examDate, LocalDateTime examStartTime, LocalDateTime examEndTime, Integer examDurationInMinutes, Integer passingCriteria, Integer passingValue) {
+    private int passingValue;
+
+    private int totalMarks;
+    public Exam(String examCode, LocalDate examDate, LocalDateTime examStartTime, LocalDateTime examEndTime, int examDurationInMinutes, int passingCriteria, int passingValue,int totalMarks) {
         this.examCode = examCode;
         this.examDate = examDate;
         this.examStartTime = examStartTime;
@@ -50,5 +52,6 @@ public class Exam {
         this.examDurationInMinutes = examDurationInMinutes;
         this.passingCriteria = passingCriteria;
         this.passingValue = passingValue;
+        this.totalMarks = totalMarks;
     }
 }

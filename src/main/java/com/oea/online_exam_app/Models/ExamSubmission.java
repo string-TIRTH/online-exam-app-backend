@@ -45,20 +45,18 @@ public class ExamSubmission {
 
     private LocalDateTime examEndTime;
 
-    private Integer totalMarks;
 
-    private Integer scoredMarks;
+    private int scoredMarks;
 
     @ManyToOne
     @JoinColumn(name = "exam_status_id", nullable = false)
     private ExamStatus examStatus;
 
-    public ExamSubmission(Exam exam, User user, LocalDateTime examStartTime, LocalDateTime examEndTime, Integer totalMarks, Integer scoredMarks, ExamStatus examStatus) {
+    public ExamSubmission(Exam exam, User user, LocalDateTime examStartTime, LocalDateTime examEndTime, int scoredMarks, ExamStatus examStatus) {
         this.exam = exam;
         this.user = user;
         this.examStartTime = examStartTime;
         this.examEndTime = examEndTime;
-        this.totalMarks = totalMarks;
         this.scoredMarks = scoredMarks;
         this.examStatus = examStatus;
     }
