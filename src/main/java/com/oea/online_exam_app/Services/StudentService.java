@@ -57,7 +57,7 @@ public class StudentService implements IStudentService{
     @Override
     public int updateStudent(User student,int userId) {
         try {
-            User existingUser = userRepo.findById(userId);
+            User existingUser = userRepo.findById(userId).orElseThrow(()-> new IllegalArgumentException("Invalid userId"));
             if (existingUser != null) {
                 existingUser.setFullName(student.getFullName());  
                 existingUser.setEmail(student.getEmail());  

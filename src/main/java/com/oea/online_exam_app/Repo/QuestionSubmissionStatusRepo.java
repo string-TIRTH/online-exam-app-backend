@@ -10,7 +10,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.oea.online_exam_app.Models.ExamStatus;
+import com.oea.online_exam_app.Models.QuestionSubmissionStatus;
 
 
 /**
@@ -18,7 +18,7 @@ import com.oea.online_exam_app.Models.ExamStatus;
  * @author tirth
  */
 @Repository
-public interface ExamStatusRepo extends JpaRepository<ExamStatus, Integer> {
-    Optional<ExamStatus> findById(int id);
-    ExamStatus findByExamStatusText(String examStatusText);
+public interface QuestionSubmissionStatusRepo extends JpaRepository<QuestionSubmissionStatus, Integer> {
+    Optional<QuestionSubmissionStatus> findById(int questionSubmissionId);
+    QuestionSubmissionStatus findByQuestionSubmissionStatusText(String questionSubmissionStatusText);
 }

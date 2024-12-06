@@ -16,6 +16,7 @@ import com.oea.online_exam_app.Models.Exam;
 import com.oea.online_exam_app.Models.ExamQuestions;
 import com.oea.online_exam_app.Models.Question;
 import com.oea.online_exam_app.Repo.ExamQuestionsRepo;
+import com.oea.online_exam_app.Repo.QuestionRepo;
 
 /**
  *
@@ -26,6 +27,9 @@ public class ExamQuestionsService implements IExamQuestionsService{
 
      @Autowired
     private ExamQuestionsRepo examQuestionsRepo;
+
+    @Autowired
+    private QuestionRepo questionsRepo;
 
     @Override
     public int createExamQuestion(Exam exam,Question question) {
@@ -56,7 +60,7 @@ public class ExamQuestionsService implements IExamQuestionsService{
     }
 
     @Override
-    public int updateExamQuestions(int examQuestionId, ExamQuestions examQuestion) {
+    public int updateExamQuestion(int examQuestionId, ExamQuestions examQuestion) {
         try {
             ExamQuestions existingExamQuestions = examQuestionsRepo.findById(examQuestionId).orElseThrow(() ->new IllegalArgumentException("Invalid examId"));
             if (existingExamQuestions != null) {
@@ -84,6 +88,25 @@ public class ExamQuestionsService implements IExamQuestionsService{
             return 0;
         }
     }
+
+    @Override
+    public int updateExamQuestionByIds(int examId, int oldExamQuestionId, int newQuestionId) {
+        try {   
+            questionsRepo.findById(newQuestionId).orElseThrow(() -> new IllegalArgumentException("Invalid questionsId"));
+            System.out.println(examId);
+            System.out.println(oldExamQuestionId);
+            System.out.println(newQuestionId);
+            examQuestionsRepo.setNewQuestionId(examId, oldExamQuestionId, newQuestionId);
+            System.out.println("Tirth");
+            return 1;
+        } catch (Exception e) {
+            System.out.println("Tirth");
+            System.out.println(e.toString());
+            return 0;
+        }
+    }
+
+    
 
    
 }

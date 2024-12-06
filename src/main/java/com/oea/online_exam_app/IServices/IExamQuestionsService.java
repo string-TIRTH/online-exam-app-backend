@@ -18,6 +18,8 @@ import com.oea.online_exam_app.Models.Question;
 public interface IExamQuestionsService {
     public int createExamQuestion(Exam exam, Question Question);
     public int createExamQuestions(Exam exam, List<Question> Question);
-    public int updateExamQuestions(int examQuestionId, ExamQuestions examQuestion);
+    public int updateExamQuestion(int examQuestionId, ExamQuestions examQuestion);
+    public int updateExamQuestionByIds(int examId, int oldExamQuestionId, int newQuestionId);
     public int deleteExam(int examQuestionId);
+
 }

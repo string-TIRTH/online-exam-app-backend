@@ -5,10 +5,6 @@
 
 package com.oea.online_exam_app.Requests.Exam;
 
-import java.util.List;
-
-import com.oea.online_exam_app.Models.Exam;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,15 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateExamRequest {
-    private Exam exam;
-    private List<QuestionsUpdateRequest> questions;
-    
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class QuestionsUpdateRequest {
-        private int newQuestionId;
-        private int oldQuestionsId;
-    }
+public class GetExamQuestionsRequest {
+    private int examId;
+    private int userId;
 }
