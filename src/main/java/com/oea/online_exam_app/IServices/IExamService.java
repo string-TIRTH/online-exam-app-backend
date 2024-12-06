@@ -20,5 +20,8 @@ public interface IExamService {
     public int deleteExam(int examId);
     public Exam getExamById(int examId);
     public List<Exam> getAllExams(int page,int limit);
-     public QuestionsDTO getExamQuestions(int examId,int userId);
+    public QuestionsDTO getExamQuestions(int examId,int userId);
+    public int updateSelectedOption(int userId,int questionId,int examSubmissionId,int optionId,int statusId);
+    public int submitCode(int userId,int questionId,int examSubmissionId,String code);
+    public int submitExam(int userId,int examSubmissionId);
 }

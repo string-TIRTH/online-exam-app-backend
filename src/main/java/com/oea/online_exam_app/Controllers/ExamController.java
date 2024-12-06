@@ -26,12 +26,16 @@ import com.oea.online_exam_app.Models.Category;
 import com.oea.online_exam_app.Models.Exam;
 import com.oea.online_exam_app.Models.Question;
 import com.oea.online_exam_app.Repo.CategoryRepo;
+import com.oea.online_exam_app.Repo.ExamSubmissionRepo;
 import com.oea.online_exam_app.Repo.PassingCriteriaRepo;
 import com.oea.online_exam_app.Repo.QuestionRepo;
 import com.oea.online_exam_app.Repo.UserRepo;
 import com.oea.online_exam_app.Requests.Exam.CreateExamRequest;
 import com.oea.online_exam_app.Requests.Exam.DeleteExamRequest;
 import com.oea.online_exam_app.Requests.Exam.GetExamQuestionsRequest;
+import com.oea.online_exam_app.Requests.Exam.SubmitExamRequest;
+import com.oea.online_exam_app.Requests.Exam.SubmitMCQQuestionRequest;
+import com.oea.online_exam_app.Requests.Exam.SubmitProgrammingQuestionRequest;
 import com.oea.online_exam_app.Requests.Exam.UpdateExamRequest;
 import com.oea.online_exam_app.Responses.BaseResponse;
 import com.oea.online_exam_app.Responses.Exam.GetExamQuestionsResponse;
@@ -67,6 +71,9 @@ public class ExamController {
     
     @Autowired
     PassingCriteriaRepo passingCriteriaRepo;
+
+    @Autowired
+    ExamSubmissionRepo examSubmissionRepo;
 
     @PostMapping("/create")
     @Transactional
@@ -218,6 +225,55 @@ public class ExamController {
             GetExamQuestionsResponse getExamQuestionsResponse = new GetExamQuestionsResponse("failed",
                     "Error " + e.toString(),null);
             return ResponseEntity.status(500).body(getExamQuestionsResponse);
+        }
+    }
+    @PostMapping("/submitQuestionOption")
+    @Transactional
+    public ResponseEntity<BaseResponse> submitQuestionOption(@RequestBody SubmitMCQQuestionRequest request) {
+        try {
+            userRepo.findById(request.getUserId()).orElseThrow(()-> new IllegalArgumentException("Invalid userId"));  
+            
+            // check time 
+            if(examService.updateSelectedOption(request.getUserId(),request.getExamSubmissionId(), request.getQuestionId(), request.getOptionId(),request.getStatusId())!=1){
+                throw new Error("Error while submitting question"); 
+            }    
+            BaseResponse getExamQuestionsResponse = new BaseResponse("success","OK");
+            return ResponseEntity.status(200).body(getExamQuestionsResponse);
+        } catch (Exception e) {
+            BaseResponse getExamQuestionsResponse = new BaseResponse("failed","Error " + e.toString());
+            return ResponseEntity.status(200).body(getExamQuestionsResponse);
+        }
+    }
+    @PostMapping("/submitProgrammingQuestion")
+    @Transactional
+    public ResponseEntity<BaseResponse> submitProgrammingQuestion(@RequestBody SubmitProgrammingQuestionRequest request) {
+        try {
+            userRepo.findById(request.getUserId()).orElseThrow(()-> new IllegalArgumentException("Invalid userId"));      
+            // check time 
+            if(examService.submitCode(request.getUserId(),request.getExamSubmissionId(), request.getQuestionId(), request.getSubmittedCode())!=1){
+                throw new Error("Error while submitting programming question"); 
+            }    
+            BaseResponse submitProgrammingQuestionResponse = new BaseResponse("success","OK");
+            return ResponseEntity.status(200).body(submitProgrammingQuestionResponse);
+        } catch (Exception e) {
+            BaseResponse getExamQuestionsResponse = new BaseResponse("failed","Error " + e.toString());
+            return ResponseEntity.status(200).body(getExamQuestionsResponse);
+        }
+    }
+    @PostMapping("/submitExam")
+    @Transactional
+    public ResponseEntity<BaseResponse> submitExam(@RequestBody SubmitExamRequest request) {
+        try {
+            userRepo.findById(request.getUserId()).orElseThrow(()-> new IllegalArgumentException("Invalid userId"));      
+            // check time 
+            if(examService.submitExam(request.getUserId(),request.getExamSubmissionId())!=1){
+                throw new Error("Error while submitting question"); 
+            }    
+            BaseResponse generateResultMCQResponse = new BaseResponse("success","OK");
+            return ResponseEntity.status(200).body(generateResultMCQResponse);
+        } catch (Exception e) {
+            BaseResponse getExamQuestionsResponse = new BaseResponse("failed","Error " + e.toString());
+            return ResponseEntity.status(200).body(getExamQuestionsResponse);
         }
     }
 }

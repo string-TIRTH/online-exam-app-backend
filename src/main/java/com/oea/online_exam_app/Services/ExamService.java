@@ -7,8 +7,11 @@ package com.oea.online_exam_app.Services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.naming.directory.InvalidAttributesException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,6 +73,7 @@ public class ExamService implements IExamService {
     @Autowired
     private QuestionTypeRepo questionTypeRepo;
 
+    
     @Override
     public int createExam(Exam exam) {
         try {
@@ -167,7 +171,7 @@ public class ExamService implements IExamService {
                     .findByQuestionSubmissionStatusText(QuestionSubmissionStatusEnum.UnAttepted.name());
 
             ExamSubmission examSubmission = new ExamSubmission(
-                    exam, user, LocalDateTime.now(), LocalDateTime.now(), 0, examStatus);
+                    exam, user, LocalDateTime.now(), LocalDateTime.now().plus(exam.getExamDurationInMinutes(),ChronoUnit.MINUTES), 0, examStatus);
             examSubmissionRepo.save(examSubmission);
 
             List<QuestionSubmission> questionSubmissionsList = new ArrayList<>();
@@ -226,5 +230,63 @@ public class ExamService implements IExamService {
                                 example.getInputText(),
                                 example.getOutputText()))
                         .toList());
+    }
+
+    @Override
+    public int updateSelectedOption(int userId,int examSubmissionId,int questionId,  int optionId, int statusId) {
+        try {
+            Integer optionIdFinal = optionId==0?null:optionId;
+            if(questionSubmissionRepo.updateOptionAndStatus(userId, examSubmissionId, questionId, optionIdFinal, statusId)>0){
+                return 1;
+            }
+            return -1;
+        } catch (Exception e) {
+            System.out.println(e.getCause());
+            return 0;
+        }
+    }
+
+    @Override
+    public int submitCode(int userId,int examSubmissionId,int questionId, String code) {
+        try {
+            questionSubmissionRepo.updateProgrammingCode(userId, examSubmissionId, questionId, code);
+            if(questionSubmissionRepo.updateProgrammingCode(userId, examSubmissionId, questionId, code)>0){
+                return 1;
+            }
+            return -1;
+        } catch (Exception e) {
+            System.out.println(e.getCause());
+            return 0;
+        }
+    }
+
+    @Override
+    public int submitExam(int userId,int examSubmissionId) {
+        try {
+            ExamSubmission examSubmission = examSubmissionRepo.findById(examSubmissionId).orElseThrow(()-> new InvalidAttributesException("Invalid ExamSubmissionId"));
+            int scoredMarks = calculateScoredMarks(examSubmissionId);
+            System.out.println(scoredMarks);
+            examSubmission.setScoredMarks(scoredMarks);
+            if(LocalDateTime.now().isAfter(examSubmission.getExam().getExamEndTime())){
+                examSubmission.setExamStatus(examStatusRepo.findByExamStatusText(ExamStatusEnum.Late.name()));
+            }else{
+                examSubmission.setExamStatus(examStatusRepo.findByExamStatusText(ExamStatusEnum.Completed.name()));
+            }
+            examSubmission.setExamEndTime(LocalDateTime.now());
+            examSubmissionRepo.save(examSubmission);
+            return 1;
+        } catch (Exception e) {
+            System.out.println(e.getCause());
+            return 0;
+        }
+    }
+
+    public int calculateScoredMarks(int examSubmissionId){
+        int totalScoredMarks = 0;
+        List<QuestionSubmission> questions = questionSubmissionRepo.getCorrectSubmissions(examSubmissionId);
+        for (QuestionSubmission question : questions) {
+            totalScoredMarks += question.getQuestion().getDifficulty().getDifficultyWeight();
+        }
+        return totalScoredMarks;
     }
 }

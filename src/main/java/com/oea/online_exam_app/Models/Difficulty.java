@@ -24,7 +24,7 @@ public class Difficulty {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int difficultyId;
     private String difficultyText;
-    private float difficultyWeight;
+    private int difficultyWeight;
 
     public Difficulty(){}
 
