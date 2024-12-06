@@ -43,6 +43,7 @@ public class ExamSubmission {
 
     private LocalDateTime examStartTime;
 
+    @Column(name = "exam_end_time", nullable = true)
     private LocalDateTime examEndTime;
 
 

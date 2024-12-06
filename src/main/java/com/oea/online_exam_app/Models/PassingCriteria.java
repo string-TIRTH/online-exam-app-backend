@@ -19,19 +19,19 @@ import lombok.NoArgsConstructor;
  * @author tirth
  */
 @Entity
-@Table(name = "exam_status_master")
+@Table(name = "passing_criteria_master")
 @Data
 @NoArgsConstructor
-public class ExamStatus {
+public class PassingCriteria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "exam_status_id")
-    private int examStatusId;
+    @Column(name = "passing_criteria_id")
+    private int passingCriteriaId;
 
-    @Column(name = "exam_status_text", nullable = false)
-    private String examStatusText;
+    @Column(name = "passing_criteria_text", nullable = false)
+    private String passingCriteriaText;
 
-    public ExamStatus(String examStatusText) {
-        this.examStatusText = examStatusText;
+    public PassingCriteria(String passingCriteriaText) {
+        this.passingCriteriaText = passingCriteriaText;
     }
 }

@@ -13,25 +13,24 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 /**
  *
  * @author tirth
  */
 @Entity
-@Table(name = "exam_status_master")
+@Table(name = "question_submission_status_master")
 @Data
 @NoArgsConstructor
-public class ExamStatus {
+public class QuestionSubmissionStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "exam_status_id")
-    private int examStatusId;
+    @Column(name = "question_submission_status_id")
+    private int questionSubmissionStatusId;
 
-    @Column(name = "exam_status_text", nullable = false)
-    private String examStatusText;
+    @Column(name = "question_submission_status_text", nullable = false)
+    private String questionSubmissionStatusText;
 
-    public ExamStatus(String examStatusText) {
-        this.examStatusText = examStatusText;
+    public QuestionSubmissionStatus(String questionSubmissionStatusText) {
+        this.questionSubmissionStatusText = questionSubmissionStatusText;
     }
 }

@@ -6,6 +6,8 @@
 package com.oea.online_exam_app.Models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,7 +31,8 @@ public class QuestionExample {
 
 
     @ManyToOne
-    @JoinColumn(name = "question_id", referencedColumnName = "questionId", nullable = false) 
+    @JoinColumn(name = "question_id", referencedColumnName = "questionId", nullable = false)
+    @JsonIgnore
     private Question question;  
 
     private String inputText;

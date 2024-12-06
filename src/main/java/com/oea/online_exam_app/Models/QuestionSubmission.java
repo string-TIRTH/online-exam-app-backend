@@ -31,26 +31,32 @@ public class QuestionSubmission {
     private int questionSubmissionId;
 
     @ManyToOne
-    @JoinColumn(name = "question_id", nullable = false)
-    private Question question;
+    @JoinColumn(name = "exam_submission_id", nullable = false)
+    private ExamSubmission examSubmission;
+   
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "exam_submission_id", nullable = false)
-    private ExamSubmission examSubmission;
+    @JoinColumn(name = "question_id", nullable = false)
+    private Question question;
 
     @ManyToOne
-    @JoinColumn(name = "question_option", nullable = false)
+    @JoinColumn(name = "selected_option_id", nullable = true)
     private QuestionOption selectedOption;
 
-    public QuestionSubmission(Question question, User user, ExamSubmission examSubmission, int selectedOptionId,QuestionOption selectedOption) {
+    @ManyToOne
+    @JoinColumn(name = "question_submission_status_id", nullable = true)
+    private QuestionSubmissionStatus questionSubmissionStatus;
+
+    public QuestionSubmission(Question question, User user, ExamSubmission examSubmission, QuestionOption selectedOption,QuestionSubmissionStatus questionSubmissionStatus) {
         this.question = question;
         this.user = user;
         this.examSubmission = examSubmission;
         this.selectedOption = selectedOption;
+        this.questionSubmissionStatus = questionSubmissionStatus;
     }
 
 }

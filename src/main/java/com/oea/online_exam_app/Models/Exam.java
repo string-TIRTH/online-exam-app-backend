@@ -12,6 +12,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,12 +41,14 @@ public class Exam {
 
     private int examDurationInMinutes;
 
-    private int passingCriteria;
+    @ManyToOne
+    @JoinColumn(name = "passing_criteria_id", nullable = false)
+    private PassingCriteria passingCriteria;
 
     private int passingValue;
 
     private int totalMarks;
-    public Exam(String examCode, LocalDate examDate, LocalDateTime examStartTime, LocalDateTime examEndTime, int examDurationInMinutes, int passingCriteria, int passingValue,int totalMarks) {
+    public Exam(String examCode, LocalDate examDate, LocalDateTime examStartTime, LocalDateTime examEndTime, int examDurationInMinutes, PassingCriteria passingCriteria, int passingValue,int totalMarks) {
         this.examCode = examCode;
         this.examDate = examDate;
         this.examStartTime = examStartTime;
