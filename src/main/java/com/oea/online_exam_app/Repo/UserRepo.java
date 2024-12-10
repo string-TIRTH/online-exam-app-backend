@@ -5,6 +5,8 @@
 
 package com.oea.online_exam_app.Repo;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +19,6 @@ import com.oea.online_exam_app.Models.User;
 @Repository
 public interface UserRepo extends JpaRepository<User,Integer>{
     User findByEmailAndPassword(String email, String password);
+    Optional<User> findByEmail(String email);
     User findById(int userId);
 }
