@@ -8,6 +8,7 @@ package com.oea.online_exam_app.Services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.oea.online_exam_app.IServices.IStudentService;
@@ -15,7 +16,6 @@ import com.oea.online_exam_app.Models.Role;
 import com.oea.online_exam_app.Models.User;
 import com.oea.online_exam_app.Repo.RoleRepo;
 import com.oea.online_exam_app.Repo.UserRepo;
-
 /**
  *
  * @author tirth
@@ -24,15 +24,21 @@ import com.oea.online_exam_app.Repo.UserRepo;
 public class StudentService implements IStudentService{
 
     @Autowired
-    UserRepo userRepo;
-    @Autowired
-    RoleRepo roleRepo;
+    private BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UserRepo userRepo;
+    @Autowired
+    private RoleRepo roleRepo;
+
+    
     @Override
     public int registerStudent(User student) {
         try {
             Role role = roleRepo.findByRole("Student");
+            String hashedPassword = passwordEncoder.encode(student.getPassword());
             student.setRole(role);
+            student.setPassword(hashedPassword);
             userRepo.save(student);
             return 1;    
         } catch (Exception e) {
