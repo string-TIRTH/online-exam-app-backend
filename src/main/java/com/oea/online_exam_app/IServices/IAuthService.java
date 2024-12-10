@@ -10,5 +10,5 @@ package com.oea.online_exam_app.IServices;
  * @author tirth
  */
 public interface IAuthService {
-    public int loginUser(String email,String password);
+    public String loginUser(String email,String password);
 }

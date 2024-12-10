@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "jwt.expiration",
+  "type": "java.lang.Long",
+  "description": "A description for 'jwt.expiration'"
+}]}
