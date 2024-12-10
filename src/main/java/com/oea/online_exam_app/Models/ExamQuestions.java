@@ -6,8 +6,7 @@
 package com.oea.online_exam_app.Models;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,33 +15,34 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
-
+import lombok.NoArgsConstructor;
 /**
  *
  * @author tirth
  */
-@Entity
-@Table(name="question_example")
-@Data
-public class QuestionExample {
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private int exampleId;
 
+
+
+@Entity
+@Table(name="exam_questions")
+@Data
+@NoArgsConstructor
+public class ExamQuestions {
+@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "exam_question_id")
+    private int examQuestionId;
 
     @ManyToOne
-    @JoinColumn(name = "question_id", referencedColumnName = "questionId", nullable = false)
-    @JsonIgnore
-    private Question question;  
+    @JoinColumn(name = "exam_id", nullable = false)
+    private Exam exam;
 
-    private String inputText;
-    private String outputText;
+    @ManyToOne
+    @JoinColumn(name = "question_id", nullable = false)
+    private Question question;
 
-    public QuestionExample(){}
-
-    public QuestionExample(String inputText,String outputText, Question question){
-        this.inputText = inputText;
-        this.outputText = outputText;
+    public ExamQuestions(Exam exam, Question question) {
+        this.exam = exam;
         this.question = question;
     }
 }

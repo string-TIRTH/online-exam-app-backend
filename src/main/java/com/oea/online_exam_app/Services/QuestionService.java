@@ -49,7 +49,7 @@ public class QuestionService implements IQuestionService{
     @Override
     public int updateQuestion(Question questionType,int questionId) {
        try {
-            Question existingQuestion = questionRepo.findById(questionId);
+            Question existingQuestion = questionRepo.findById(questionId).orElseThrow(() -> new IllegalArgumentException("Invalid questionId"));
             if (existingQuestion != null) {
                 existingQuestion.setQuestionText(questionType.getQuestionText());  
                 questionRepo.save(existingQuestion);

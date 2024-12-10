@@ -15,6 +15,7 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.oea.online_exam_app.Enums.QuestionTypeEnum;
 import com.oea.online_exam_app.Models.Category;
 import com.oea.online_exam_app.Models.Difficulty;
@@ -39,8 +41,7 @@ import com.oea.online_exam_app.Responses.Question.CreateQuestionResponse;
 import com.oea.online_exam_app.Services.QuestionExampleService;
 import com.oea.online_exam_app.Services.QuestionOptionService;
 import com.oea.online_exam_app.Services.QuestionService;
-
-import jakarta.transaction.Transactional;
+import com.oea.online_exam_app.Views.View;
 
 /**
  *
@@ -74,6 +75,7 @@ public class QuestionController {
     QuestionTypeRepo questionTypeRepo;
 
     @PostMapping("/create/single")
+    @JsonView(View.Admin.class)
     public ResponseEntity<CreateQuestionResponse> createQuestions(@RequestBody CreateQuestionRequest request) {
         try {
             Category category = categoryRepo.findById(request.getCategoryId())
@@ -134,8 +136,9 @@ public class QuestionController {
     }
 
     @PostMapping("/create/bulk")
-    @Transactional 
-    public ResponseEntity<CreateQuestionResponse> createQuestion(@RequestParam("file") MultipartFile file) {
+    @Transactional
+    @JsonView(View.Admin.class)
+    public ResponseEntity<CreateQuestionResponse> createQuestion(@RequestParam MultipartFile file) {
         try {
             if (file.isEmpty()) {
                 return ResponseEntity.status(400)
@@ -152,10 +155,10 @@ public class QuestionController {
                     try {
                         String questionText = record.get("questionText");
                         Category category = categoryRepo.findByCategoryText(record.get("category"))
-                                .orElseThrow(() -> new IllegalArgumentException("Invalid category: "));
+                                .orElseThrow(() -> new IllegalArgumentException("Invalid categoryId "));
                         Difficulty difficulty = difficultyRepo.findByDifficultyText(record.get("difficulty"))
                                 .orElseThrow(
-                                        () -> new IllegalArgumentException("Invalid difficultyId:"));
+                                        () -> new IllegalArgumentException("Invalid difficultyId"));
                         QuestionType questionType = questionTypeRepo.findByQuestionTypeText(record.get("questionType"))
                                 .orElseThrow(() -> new IllegalArgumentException(
                                         "Invalid questionType: "));
@@ -211,7 +214,6 @@ public class QuestionController {
                     .body(new CreateQuestionResponse("failed", "Error: " + e.getMessage()));
         }
     }
-
     private <T> void validateQuestionOptions(List<T> options, Function<T, Boolean> isCorrectExtractor) {
         if (options == null || options.isEmpty()) {
             throw new IllegalArgumentException("MCQ questions must have options.");
@@ -220,7 +222,6 @@ public class QuestionController {
             throw new IllegalArgumentException("MCQ questions must have at least one correct option.");
         }
     }
-
     private <T> void validateQuestionExamples(List<T> examples) {
         if (examples == null || examples.isEmpty()) {
             throw new IllegalArgumentException("Programming questions must have examples.");

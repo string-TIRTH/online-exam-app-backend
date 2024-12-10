@@ -10,7 +10,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.oea.online_exam_app.Models.Category;
+import com.oea.online_exam_app.Models.PassingCriteria;
 
 
 /**
@@ -18,7 +18,7 @@ import com.oea.online_exam_app.Models.Category;
  * @author tirth
  */
 @Repository
-public interface CategoryRepo extends JpaRepository<Category, Integer> {
-    Optional<Category> findById(int id);
-    Optional<Category> findByCategoryText(String categoryText);
+public interface PassingCriteriaRepo extends JpaRepository<PassingCriteria, Integer> {
+    Optional<PassingCriteria> findById(int passingCriteriaId);
+    PassingCriteria findByPassingCriteriaText(String passingCriteriaText);
 }

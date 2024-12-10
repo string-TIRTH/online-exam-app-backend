@@ -1,0 +1,63 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+
+package com.oea.online_exam_app.Services;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.oea.online_exam_app.IServices.IQuestionSubmissionService;
+import com.oea.online_exam_app.Models.QuestionSubmission;
+import com.oea.online_exam_app.Repo.QuestionSubmissionRepo;
+
+/**
+ *
+ * @author tirth
+ */
+@Service
+public class QuestionsSubmissionService implements IQuestionSubmissionService{
+
+     @Autowired
+    private QuestionSubmissionRepo questionSubmissionRepo;
+
+    @Override
+    public int createQuestionSubmission(QuestionSubmission questionSubmission) {
+        try {
+            questionSubmissionRepo.save(questionSubmission);
+            return 1;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    @Override
+    public int updateQuestionSubmission(QuestionSubmission questionSubmission, int questionSubmissionId) {
+        try {
+            QuestionSubmission existingQuestionSubmission = questionSubmissionRepo.findById(questionSubmissionId).orElseThrow(() ->new IllegalArgumentException("Invalid questionSubmissionId"));
+            if (existingQuestionSubmission != null) {
+                existingQuestionSubmission.setSelectedOption(questionSubmission.getSelectedOption());
+                return existingQuestionSubmission.getQuestionSubmissionId();
+            }
+            return -1;
+        } catch (Exception e) {
+            System.out.println(e.getCause());
+            return 0;
+        }
+    }
+
+    @Override
+    public int deleteQuestionSubmission(int questionSubmissionId) {
+        try {
+            if (questionSubmissionRepo.existsById(questionSubmissionId)) {
+                questionSubmissionRepo.deleteById(questionSubmissionId);
+                return questionSubmissionId;
+            }
+            return -1;
+        } catch (Exception e) {
+            System.out.println(e.getCause());
+            return 0;
+        }
+    }
+}
