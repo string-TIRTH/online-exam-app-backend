@@ -13,7 +13,6 @@ import java.util.List;
 
 import javax.crypto.SecretKey;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,11 +34,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     
     private final JwtUtil jwtUtil;
+    private final UserRepo userRepo;
 
-    @Autowired
-    UserRepo userRepo;
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil,UserRepo userRepo) {
         this.jwtUtil = jwtUtil;
+        this.userRepo = userRepo;
     }
 
     private SecretKey getSigningKey() {
@@ -51,9 +50,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws IOException, ServletException {
         try {
             String token = getTokenFromRequest(request);
-
             if (token != null && jwtUtil.validateToken(token)) {
                 String email = jwtUtil.getEmailFromToken(token);
+                
                 String role = userRepo.findByEmail(email).orElseThrow(()-> new InvalidParameterException("Invalid Email")).getRole().getRole();
                 List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
                 
@@ -63,7 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
-            System.err.println("Error during JWT authentication: " + e.getMessage());
+            System.err.println("Error during JWT authentication: " + e);
         }
 
         filterChain.doFilter(request, response);

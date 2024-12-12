@@ -30,10 +30,6 @@ public class JwtUtil {
     @Autowired
     JwtConfig jwtConfig;
 
-    // private final String jwtSecret = "stupidSHA256stupidSHA256stupidSHA256stupidSHA256stupidSHA256stupidSHA256";
-
-    // private final long jwtExpiration = 3600000;
-
     private Key getSigningKey() {
     byte[] keyBytes = Base64.getEncoder().encode(jwtConfig.getJwtSecret().getBytes());
     return new SecretKeySpec(keyBytes, SignatureAlgorithm.HS512.getJcaName());
@@ -49,6 +45,7 @@ public class JwtUtil {
                     .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getJwtExpiration()))
                     .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                     .compact();
+                    
         } catch (JwtException e) {
             System.out.println("Error generating token: " + e.getMessage());
             return null; 

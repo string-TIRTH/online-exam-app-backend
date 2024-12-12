@@ -19,4 +19,5 @@ public interface IQuestionTypeService {
     public int createQuestionTypes(List<QuestionType> questionTypes);
     public int updateQuestionType(QuestionType questionType,int questionId);
     public int deleteQuestionType(int questionId);
+    public List<QuestionType> getAllQuestionTypes();
 }

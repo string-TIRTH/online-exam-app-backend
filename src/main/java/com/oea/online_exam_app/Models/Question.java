@@ -7,9 +7,6 @@ package com.oea.online_exam_app.Models;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.oea.online_exam_app.Views.View;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,23 +30,17 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
     private int questionId;
      
-    @JsonView(View.Public.class)
     private String questionText;
 
     @ManyToOne
-    @JsonView(View.Admin.class)
     @JoinColumn(name = "category_id", referencedColumnName = "categoryId", nullable = false) 
     private Category category;  
 
-
     @ManyToOne
-    @JsonView(View.Admin.class)
     @JoinColumn(name = "question_type_id", referencedColumnName = "questionTypeId", nullable = false) 
     private QuestionType questionType;  
 
-
     @ManyToOne
-    @JsonView(View.Admin.class)
     @JoinColumn(name = "difficulty_id", referencedColumnName = "difficultyId", nullable = false) 
     private Difficulty difficulty;  
 

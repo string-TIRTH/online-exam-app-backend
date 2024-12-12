@@ -19,4 +19,5 @@ public interface ICategoryService {
     public int createCategories(List<Category> categories);
     public int updateCategory(Category category, int categoryId);
     public int deleteCategory( int categoryId );
+    public List<Category> getAllCategories();
 }

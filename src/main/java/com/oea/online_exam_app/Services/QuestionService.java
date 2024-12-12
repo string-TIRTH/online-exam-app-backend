@@ -10,9 +10,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.oea.online_exam_app.Enums.QuestionTypeEnum;
 import com.oea.online_exam_app.IServices.IQuestionService;
 import com.oea.online_exam_app.Models.Question;
+import com.oea.online_exam_app.Repo.QuestionExampleRepo;
+import com.oea.online_exam_app.Repo.QuestionOptionRepo;
 import com.oea.online_exam_app.Repo.QuestionRepo;
+
+import jakarta.transaction.Transactional;
 
 /**
  *
@@ -23,6 +28,13 @@ public class QuestionService implements IQuestionService{
 
     @Autowired
     private QuestionRepo questionRepo;
+
+    @Autowired
+    private QuestionOptionRepo questionOptionRepo;
+
+    @Autowired
+    private QuestionExampleRepo questionExampleRepo;
+
     @Override
     public int createQuestion(Question question) {
         try {
@@ -36,9 +48,9 @@ public class QuestionService implements IQuestionService{
     }
 
     @Override
-    public int createQuestions(List<Question> questionTypes) {
+    public int createQuestions(List<Question> questions) {
         try {
-            questionRepo.saveAll(questionTypes);
+            questionRepo.saveAll(questions);
             return 1;    
         } catch (Exception e) {
             System.out.println(e.getCause());
@@ -47,12 +59,16 @@ public class QuestionService implements IQuestionService{
     }
 
     @Override
-    public int updateQuestion(Question questionType,int questionId) {
+    public int updateQuestion(Question question,int questionId) {
        try {
             Question existingQuestion = questionRepo.findById(questionId).orElseThrow(() -> new IllegalArgumentException("Invalid questionId"));
             if (existingQuestion != null) {
-                existingQuestion.setQuestionText(questionType.getQuestionText());  
+                existingQuestion.setQuestionText(question.getQuestionText());  
+                existingQuestion.setCategory(question.getCategory());  
+                existingQuestion.setDifficulty(question.getDifficulty());  
+                existingQuestion.setQuestionType(question.getQuestionType());  
                 questionRepo.save(existingQuestion);
+                System.out.println(existingQuestion.getCategory());
                 return existingQuestion.getQuestionId();
             }
             return -1;
@@ -63,9 +79,17 @@ public class QuestionService implements IQuestionService{
     }
 
     @Override
+    @Transactional
     public int deleteQuestion(int questionId) {
         try {
-            if (questionRepo.existsById(questionId)) {
+            Question question = questionRepo.findById(questionId).orElseThrow(()-> new IllegalArgumentException("Invalid questionId"));
+
+            if (question.getQuestionType().getQuestionTypeText().equals(QuestionTypeEnum.MCQ.name())) {
+                questionOptionRepo.deleteByQuestion(question);
+                questionRepo.deleteById(questionId);
+                return questionId;
+            }else if (question.getQuestionType().getQuestionTypeText().equals(QuestionTypeEnum.Programming.name())) {
+                questionExampleRepo.deleteByQuestion(question);
                 questionRepo.deleteById(questionId);
                 return questionId;
             }
@@ -73,6 +97,25 @@ public class QuestionService implements IQuestionService{
         } catch (Exception e) {
             System.out.println(e.getCause());
             return 0;
+        }
+    }
+
+    @Override
+    public List<Question> getQuestions(int page,int limit,String search) {
+        try {
+            int offset = (page - 1) * limit;
+            System.out.println(offset);
+            List<Question> questions;
+            if(search.trim().isBlank()){
+                questions = questionRepo.getQuestionList(limit,offset);
+
+            }else{
+                questions = questionRepo.getQuestionListWithSearch(limit,offset,search);
+            }
+            return questions;
+        } catch (Exception e) {
+            System.out.println(e.getCause());
+            return null;
         }
     }
 }

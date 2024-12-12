@@ -23,7 +23,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.oea.online_exam_app.Enums.RoleEnum;
+import com.oea.online_exam_app.Models.Role;
 import com.oea.online_exam_app.Models.User;
+import com.oea.online_exam_app.Repo.RoleRepo;
+import com.oea.online_exam_app.Repo.UserRepo;
+import com.oea.online_exam_app.Requests.Base.GetListWithPagingSearchRequest;
+import com.oea.online_exam_app.Requests.Student.CreateStudentRequest;
+import com.oea.online_exam_app.Requests.Student.UpdateStudentRequest;
+import com.oea.online_exam_app.Responses.Base.GetListWithPagingSearchResponse;
+import com.oea.online_exam_app.Responses.BaseResponse;
 import com.oea.online_exam_app.Services.StudentService;
 
 /**
@@ -37,9 +46,20 @@ public class StudentController {
     @Autowired
     StudentService studentService;
 
+    @Autowired
+    UserRepo userRepo;
+    @Autowired
+    RoleRepo roleRepo;
+
     @PostMapping("/register/single")
-    public ResponseEntity<String> registerStudent(@RequestBody User student) {
-        int result = studentService.registerStudent(student);
+    public ResponseEntity<String> registerStudent(@RequestBody CreateStudentRequest request) {
+        User newStudent = new User(
+            request.getFullName(),
+            request.getMobileNumber(),
+            request.getEmail(),
+            request.getPassword()
+        );
+        int result = studentService.registerStudent(newStudent);
         if (result == 1) {
             return ResponseEntity.ok("Student registered successfully");
         } else {
@@ -79,19 +99,25 @@ public class StudentController {
         }
     }
 
-    @PostMapping("/update/{userId}")
-    public ResponseEntity<String> updateStudent(@PathVariable("userId") int userId, @RequestBody User updatedStudent) {
+    @PostMapping("/update")
+    public ResponseEntity<BaseResponse> updateQuestion(@RequestBody UpdateStudentRequest request) {
         try {
-            int result = studentService.updateStudent(updatedStudent,userId);
-            if (result > 1) {
-                return ResponseEntity.ok("Student updated successfully");
-            } else {
-                return ResponseEntity.status(404).body("Student not found or update failed");
+            User user = request.getStudent();
+            if(studentService.updateStudent(user, user.getUserId())>0){
+                return ResponseEntity.status(200).body(new BaseResponse(
+                    "success","question updated successfully"
+                ));
             }
+            return ResponseEntity.status(400).body(new BaseResponse(
+                "failed","unable to update question"
+            ));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error"+e.toString());
+            System.out.println(e);
+            return ResponseEntity.status(500).body(new BaseResponse(
+               "failed","Internal server error"
+            ));
         }
-        
+
     }
 
     @DeleteMapping("delete/{userId}")
@@ -106,6 +132,28 @@ public class StudentController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error"+e.toString());
         }
+    }
+
+     @PostMapping("/getStudentList")
+    public ResponseEntity<GetListWithPagingSearchResponse> getQuestionList(@RequestBody GetListWithPagingSearchRequest request) {
+        try {
+            Role role = roleRepo.findByRole(RoleEnum.Student.name());
+            List<User> students = studentService.getStudents(request.getPage(),request.getLimit(),request.getSearch(),role.getRoleId());
+            long studentCount = userRepo.getQuestionCountWithSearch(request.getSearch(),role.getRoleId());
+            if(students!= null && !students.isEmpty()){
+                return ResponseEntity.status(200).body(new GetListWithPagingSearchResponse(
+                    "success","ok",students,studentCount
+                ));
+            }
+            return ResponseEntity.status(400).body(new GetListWithPagingSearchResponse(
+                    "failed","questions not found",null,0
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new GetListWithPagingSearchResponse(
+               "failed","Internal server error",null,0
+            ));
+        }
+
     }
 
 }

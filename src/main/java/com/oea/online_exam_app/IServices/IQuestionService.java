@@ -19,4 +19,5 @@ public interface IQuestionService {
     public int createQuestions(List<Question> questions);
     public int updateQuestion(Question question, int questionId);
     public int deleteQuestion(int questionId);
+    public List<Question> getQuestions(int page,int limit,String search);
 }

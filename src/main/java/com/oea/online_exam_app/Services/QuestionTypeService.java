@@ -8,6 +8,7 @@ package com.oea.online_exam_app.Services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.oea.online_exam_app.IServices.IQuestionTypeService;
@@ -71,6 +72,17 @@ public class QuestionTypeService implements IQuestionTypeService{
         } catch (Exception e) {
             System.out.println(e.getCause());
             return 0;
+        }
+    }
+
+    @Override
+    public List<QuestionType> getAllQuestionTypes() {
+        try {
+            List<QuestionType> questionTypes = questionTypeRepo.findAll(Sort.by(Sort.Direction.ASC,"questionTypeId"));
+            return questionTypes;
+        } catch (Exception e) {
+            System.out.println(e.getCause());
+            return null;
         }
     }
 

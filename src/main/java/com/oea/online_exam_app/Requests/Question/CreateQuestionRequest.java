@@ -20,9 +20,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateQuestionRequest {
     private String questionText;
-    private int categoryId;
-    private int questionTypeId;
-    private int difficultyId;
+    private String category;
+    private String questionType;
+    private String difficulty;
     private List<QuestionOptionRequest> questionOptions;
     private List<QuestionExampleRequest> questionExamples;
 

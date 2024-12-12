@@ -8,6 +8,7 @@ package com.oea.online_exam_app.Services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.oea.online_exam_app.IServices.ICategoryService;
@@ -24,9 +25,9 @@ public class CategoryService implements ICategoryService{
     @Autowired
     private CategoryRepo categoryRepo;
     @Override
-    public int createCategory(Category questionType) {
+    public int createCategory(Category category) {
         try {
-            categoryRepo.save(questionType);
+            categoryRepo.save(category);
             return 1;
         } catch (Exception e) {
             return 0;
@@ -34,9 +35,9 @@ public class CategoryService implements ICategoryService{
     }
 
     @Override
-    public int createCategories(List<Category> questionTypes) {
+    public int createCategories(List<Category> categories) {
         try {
-            categoryRepo.saveAll(questionTypes);
+            categoryRepo.saveAll(categories);
             return 1;    
         } catch (Exception e) {
             System.out.println(e.getCause());
@@ -74,4 +75,14 @@ public class CategoryService implements ICategoryService{
         }
     }
 
+    @Override
+    public List<Category> getAllCategories() {
+        try {
+            List<Category> categories = categoryRepo.findAll(Sort.by(Sort.Direction.ASC,"categoryId"));
+            return categories;
+        } catch (Exception e) {
+            System.out.println(e.getCause());
+            return null;
+        }
+    }
 }

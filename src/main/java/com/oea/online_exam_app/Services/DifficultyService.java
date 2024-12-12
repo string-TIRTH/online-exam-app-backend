@@ -8,6 +8,7 @@ package com.oea.online_exam_app.Services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.oea.online_exam_app.IServices.IDifficultyService;
@@ -74,5 +75,14 @@ public class DifficultyService implements IDifficultyService{
         }
     }
 
-   
+   @Override
+    public List<Difficulty> getAllDifficulties() {
+        try {
+            List<Difficulty> difficulties = difficultyRepo.findAll(Sort.by(Sort.Direction.ASC,"difficultyId"));
+            return difficulties;
+        } catch (Exception e) {
+            System.out.println(e.getCause());
+            return null;
+        }
+    }
 }

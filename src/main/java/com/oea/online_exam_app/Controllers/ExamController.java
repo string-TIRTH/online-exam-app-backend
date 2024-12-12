@@ -65,10 +65,10 @@ public class ExamController {
 
     @Autowired
     UserRepo userRepo;
+
     @Autowired
     QuestionRepo questionRepo;
 
-    
     @Autowired
     PassingCriteriaRepo passingCriteriaRepo;
 

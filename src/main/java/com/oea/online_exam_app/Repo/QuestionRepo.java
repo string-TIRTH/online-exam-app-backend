@@ -26,4 +26,13 @@ public interface QuestionRepo extends JpaRepository<Question, Integer>{
 
     @Query(value = "SELECT TOP (:limit) * FROM questions WHERE category_id = :categoryId ORDER BY NEWID()", nativeQuery = true)
     List<Question> findRandomQuestionsByCategory(@Param("categoryId") int categoryId, @Param("limit") int limit);
+
+    @Query(value = "SELECT * FROM questions ORDER BY question_id OFFSET :skip ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
+    List<Question> getQuestionList(int limit,int skip);
+
+    @Query(value = "SELECT * FROM questions WHERE question_id LIKE CONCAT(:search,'%') OR question_text LIKE CONCAT('%',:search,'%') ORDER BY question_id OFFSET :skip ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
+    List<Question> getQuestionListWithSearch(int limit,int skip,String search);
+
+    @Query(value = "SELECT COUNT(*) FROM questions WHERE question_id LIKE CONCAT(:search,'%') OR question_text LIKE CONCAT('%',:search,'%')", nativeQuery = true)
+    long getQuestionCountWithSearch(String search);
 }

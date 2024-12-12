@@ -60,24 +60,23 @@ public class StudentService implements IStudentService{
         }
     }
 
-    @Override
-    public int updateStudent(User student,int userId) {
-        try {
-            User existingUser = userRepo.findById(userId).orElseThrow(()-> new IllegalArgumentException("Invalid userId"));
+     @Override
+    public int updateStudent(User user,int userId) {
+       try {
+            User existingUser =  userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("Invalid userId"));
             if (existingUser != null) {
-                existingUser.setFullName(student.getFullName());  
-                existingUser.setEmail(student.getEmail());  
-                existingUser.setMobileNumber(student.getMobileNumber());  
+                existingUser.setFullName(user.getFullName());  
+                existingUser.setEmail(user.getEmail());
+                existingUser.setMobileNumber(user.getMobileNumber());
                 userRepo.save(existingUser);
-            return existingUser.getUserId();
-        }
+                return existingUser.getUserId();
+            }
             return -1;
         } catch (Exception e) {
             System.out.println(e.getCause());
             return 0;
         }
     }
-
     @Override
     public int deleteStudent(int userId) {
         try {
@@ -92,5 +91,22 @@ public class StudentService implements IStudentService{
         }
     }
 
+    @Override
+    public List<User> getStudents(int page,int limit,String search,int roleId) {
+        try {
+            int offset = (page - 1) * limit;
+            List<User> students;
+            if(search.trim().isBlank()){
+                students = userRepo.getStudentList(limit,offset,roleId);
+
+            }else{
+                students = userRepo.getStudentListWithSearch(limit,offset,search,roleId);
+            }
+            return students;
+        } catch (Exception e) {
+            System.out.println(e.getCause());
+            return null;
+        }
+    }
     
 }

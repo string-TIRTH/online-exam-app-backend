@@ -42,13 +42,10 @@ public class User {
 
     public User() {}
 
-    public User(String fullName, String mobileNumber, String email, String password, Role role, LocalDate createdAt, LocalDate updatedAt) {
+    public User(String fullName, String mobileNumber, String email, String password) {
         this.fullName = fullName;
         this.mobileNumber = mobileNumber;
         this.email = email;
         this.password = password;
-        this.role = role;
-        this.createdAt = (createdAt != null) ? createdAt : LocalDate.now();
-        this.updatedAt = (updatedAt != null) ? updatedAt : LocalDate.now();
     }
 }

@@ -19,4 +19,5 @@ public interface IDifficultyService {
     public int createDifficulties(List<Difficulty> difficulties);
     public int updateDifficulty(Difficulty difficulty, int difficultyId);
     public int deleteDifficulty(int difficultyId);
+    public List<Difficulty> getAllDifficulties();
 }
