@@ -85,4 +85,21 @@ public class DifficultyService implements IDifficultyService{
             return null;
         }
     }
+    @Override
+    public List<Difficulty> getDifficulties(int page,int limit,String search) {
+        try {
+            int offset = (page - 1) * limit;
+            List<Difficulty> difficulties;
+            if(search.trim().isBlank()){
+                difficulties = difficultyRepo.getDifficultyList(limit,offset);
+
+            }else{
+                difficulties = difficultyRepo.getDifficultyListWithSearch(limit,offset,search);
+            }
+            return difficulties;
+        } catch (Exception e) {
+            System.out.println(e.getCause());
+            return null;
+        }
+    }
 }

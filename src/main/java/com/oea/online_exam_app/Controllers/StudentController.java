@@ -14,8 +14,6 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +28,7 @@ import com.oea.online_exam_app.Repo.RoleRepo;
 import com.oea.online_exam_app.Repo.UserRepo;
 import com.oea.online_exam_app.Requests.Base.GetListWithPagingSearchRequest;
 import com.oea.online_exam_app.Requests.Student.CreateStudentRequest;
+import com.oea.online_exam_app.Requests.Student.DeleteStudentRequest;
 import com.oea.online_exam_app.Requests.Student.UpdateStudentRequest;
 import com.oea.online_exam_app.Responses.Base.GetListWithPagingSearchResponse;
 import com.oea.online_exam_app.Responses.BaseResponse;
@@ -120,33 +119,39 @@ public class StudentController {
 
     }
 
-    @DeleteMapping("delete/{userId}")
-    public ResponseEntity<String> deleteStudent(@PathVariable("userId") int userId){
+    @PostMapping("/delete")
+    public ResponseEntity<BaseResponse> deleteStudent(@RequestBody DeleteStudentRequest request) {
         try {
-            int result = studentService.deleteStudent(userId);
-            if (result > 1) {
-                return ResponseEntity.ok("Student deleted successfully");
-            } else {
-                return ResponseEntity.status(404).body("Student not found or delete failed");
+            if(studentService.deleteStudent(request.getStudentId())>0){
+                return ResponseEntity.status(200).body(new BaseResponse(
+                    "success","student deleted successfully"
+                ));
             }
+            return ResponseEntity.status(400).body(new BaseResponse(
+                "failed","unable to delete student"
+            ));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error"+e.toString());
+            System.out.println(e);
+            return ResponseEntity.status(500).body(new BaseResponse(
+               "failed","Internal server error"
+            ));
         }
+
     }
 
-     @PostMapping("/getStudentList")
-    public ResponseEntity<GetListWithPagingSearchResponse> getQuestionList(@RequestBody GetListWithPagingSearchRequest request) {
+    @PostMapping("/getStudentList")
+    public ResponseEntity<GetListWithPagingSearchResponse> getStudentList(@RequestBody GetListWithPagingSearchRequest request) {
         try {
             Role role = roleRepo.findByRole(RoleEnum.Student.name());
             List<User> students = studentService.getStudents(request.getPage(),request.getLimit(),request.getSearch(),role.getRoleId());
-            long studentCount = userRepo.getQuestionCountWithSearch(request.getSearch(),role.getRoleId());
+            long studentCount = userRepo.getStudentCountWithSearch(request.getSearch(),role.getRoleId());
             if(students!= null && !students.isEmpty()){
                 return ResponseEntity.status(200).body(new GetListWithPagingSearchResponse(
                     "success","ok",students,studentCount
                 ));
             }
-            return ResponseEntity.status(400).body(new GetListWithPagingSearchResponse(
-                    "failed","questions not found",null,0
+            return ResponseEntity.status(200).body(new GetListWithPagingSearchResponse(
+                    "failed","students not found",null,0
             ));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new GetListWithPagingSearchResponse(

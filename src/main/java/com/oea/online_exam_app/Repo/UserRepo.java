@@ -27,9 +27,9 @@ public interface UserRepo extends JpaRepository<User,Integer>{
     @Query(value = "SELECT * FROM users WHERE role_id = :student ORDER BY user_id OFFSET :skip ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
     List<User> getStudentList(int limit,int skip,int student);
 
-    @Query(value = "SELECT * FROM users WHERE role_id = :student AND (user_id LIKE CONCAT(:search,'%') OR full_name LIKE CONCAT('%',:search,'%')) ORDER BY user_id OFFSET :skip ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
+    @Query(value = "SELECT * FROM users WHERE role_id = :student AND (user_id LIKE CONCAT(:search,'%') OR full_name LIKE CONCAT(:search,'%') OR email LIKE CONCAT(:search,'%') OR mobile_number LIKE CONCAT(:search,'%')) ORDER BY user_id OFFSET :skip ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
     List<User> getStudentListWithSearch(int limit,int skip,String search,int student);
 
-    @Query(value = "SELECT COUNT(*) FROM users WHERE role_id = :student AND (user_id LIKE CONCAT(:search,'%') OR full_name LIKE CONCAT('%',:search,'%'))", nativeQuery = true)
-    long getQuestionCountWithSearch(String search,int student);
+    @Query(value = "SELECT COUNT(*) FROM users WHERE role_id = :student AND (user_id LIKE CONCAT(:search,'%') OR full_name LIKE CONCAT(:search,'%') OR email LIKE CONCAT(:search,'%') OR mobile_number LIKE CONCAT(:search,'%'))", nativeQuery = true)
+    long getStudentCountWithSearch(String search,int student);
 }

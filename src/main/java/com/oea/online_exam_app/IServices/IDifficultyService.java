@@ -20,4 +20,5 @@ public interface IDifficultyService {
     public int updateDifficulty(Difficulty difficulty, int difficultyId);
     public int deleteDifficulty(int difficultyId);
     public List<Difficulty> getAllDifficulties();
+    public List<Difficulty> getDifficulties(int page,int limit,String search);
 }

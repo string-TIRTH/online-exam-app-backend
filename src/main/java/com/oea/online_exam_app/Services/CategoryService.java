@@ -85,4 +85,22 @@ public class CategoryService implements ICategoryService{
             return null;
         }
     }
+
+    @Override
+    public List<Category> getCategories(int page,int limit,String search) {
+        try {
+            int offset = (page - 1) * limit;
+            List<Category> categories;
+            if(search.trim().isBlank()){
+                categories = categoryRepo.getCategoryList(limit,offset);
+
+            }else{
+                categories = categoryRepo.getCategoryListWithSearch(limit,offset,search);
+            }
+            return categories;
+        } catch (Exception e) {
+            System.out.println(e.getCause());
+            return null;
+        }
+    }
 }

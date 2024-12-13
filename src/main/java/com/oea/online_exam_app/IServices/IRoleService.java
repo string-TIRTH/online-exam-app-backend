@@ -20,4 +20,5 @@ public interface IRoleService {
     public Role getRoleById(int roleId);
     public Role getRoleByRole(String role);
     public List<Role> getAllRoles();
+    public List<Role> getRoles(int page,int limit,String search);
 }

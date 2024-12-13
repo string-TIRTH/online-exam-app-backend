@@ -85,6 +85,23 @@ public class QuestionTypeService implements IQuestionTypeService{
             return null;
         }
     }
+    @Override
+    public List<QuestionType> getQuestionTypes(int page,int limit,String search) {
+        try {
+            int offset = (page - 1) * limit;
+            List<QuestionType> questionTypes;
+            if(search.trim().isBlank()){
+                questionTypes = questionTypeRepo.getQuestionTypeList(limit,offset);
+
+            }else{
+                questionTypes = questionTypeRepo.getQuestionTypeListWithSearch(limit,offset,search);
+            }
+            return questionTypes;
+        } catch (Exception e) {
+            System.out.println(e.getCause());
+            return null;
+        }
+    }
 
     
 

@@ -26,6 +26,7 @@ public class QuestionOptionService implements IQuestionOptionService{
     @Override
     public int createQuestionOption(QuestionOption questionOption) {
         try {
+            questionOption.setOptionId(null);
             questionOptionRepo.save(questionOption);
             return 1;
         } catch (Exception e) {

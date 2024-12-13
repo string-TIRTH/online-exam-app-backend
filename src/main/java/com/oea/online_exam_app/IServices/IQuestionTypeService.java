@@ -20,4 +20,5 @@ public interface IQuestionTypeService {
     public int updateQuestionType(QuestionType questionType,int questionId);
     public int deleteQuestionType(int questionId);
     public List<QuestionType> getAllQuestionTypes();
+    public List<QuestionType> getQuestionTypes(int page,int limit,String search);
 }

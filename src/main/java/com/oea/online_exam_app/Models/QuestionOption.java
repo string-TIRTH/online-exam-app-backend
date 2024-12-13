@@ -7,8 +7,6 @@ package com.oea.online_exam_app.Models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.oea.online_exam_app.Views.View;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,8 +28,7 @@ import lombok.Data;
 public class QuestionOption {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @JsonView(View.Public.class)
-    private int optionId;
+    private Integer optionId;
 
 
 
@@ -40,10 +37,8 @@ public class QuestionOption {
     @JoinColumn(name = "question_id", referencedColumnName = "questionId", nullable = false)
     private Question question; 
 
-    @JsonView(View.Public.class)
     private String optionText;
     
-    @JsonView(View.Admin.class)
     @Column(name = "is_correct")
     private Boolean isCorrect;
 

@@ -20,4 +20,5 @@ public interface ICategoryService {
     public int updateCategory(Category category, int categoryId);
     public int deleteCategory( int categoryId );
     public List<Category> getAllCategories();
+    public List<Category> getCategories(int page,int limit,String search);
 }

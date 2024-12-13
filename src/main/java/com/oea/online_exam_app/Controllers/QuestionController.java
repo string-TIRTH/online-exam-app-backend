@@ -41,10 +41,16 @@ import com.oea.online_exam_app.Requests.Question.CreateQuestionRequest;
 import com.oea.online_exam_app.Requests.Question.CreateQuestionRequest.QuestionExampleRequest;
 import com.oea.online_exam_app.Requests.Question.CreateQuestionRequest.QuestionOptionRequest;
 import com.oea.online_exam_app.Requests.Question.CreateQuestionTypeRequest;
+import com.oea.online_exam_app.Requests.Question.DeleteCategoryRequest;
+import com.oea.online_exam_app.Requests.Question.DeleteDifficultyRequest;
 import com.oea.online_exam_app.Requests.Question.DeleteExamplesRequest;
 import com.oea.online_exam_app.Requests.Question.DeleteOptionsRequest;
 import com.oea.online_exam_app.Requests.Question.DeleteQuestionRequest;
+import com.oea.online_exam_app.Requests.Question.DeleteQuestionTypeRequest;
+import com.oea.online_exam_app.Requests.Question.UpdateCategoryRequest;
+import com.oea.online_exam_app.Requests.Question.UpdateDifficultyRequest;
 import com.oea.online_exam_app.Requests.Question.UpdateQuestionRequest;
+import com.oea.online_exam_app.Requests.Question.UpdateQuestionTypeRequest;
 import com.oea.online_exam_app.Responses.Base.GetListWithPagingSearchResponse;
 import com.oea.online_exam_app.Responses.BaseResponse;
 import com.oea.online_exam_app.Responses.Question.CreateQuestionResponse;
@@ -257,7 +263,12 @@ public class QuestionController {
                 if(question.getQuestionType().getQuestionTypeText().equals(QuestionTypeEnum.MCQ.name())){
                     List<QuestionOption> options = request.getQuestion().getOptions();
                     options.forEach(option->{
-                        questionOptionService.updateQuestionOption(option, option.getOptionId());
+                        if(option.getOptionId() == -1){
+                            option.setQuestion(question);
+                            questionOptionService.createQuestionOption(option);
+                        }else {
+                            questionOptionService.updateQuestionOption(option, option.getOptionId());
+                        }
                     });
                 }else if (question.getQuestionType().getQuestionTypeText().equals(QuestionTypeEnum.Programming.name())){
                     List<QuestionExample> examples = request.getQuestion().getExamples();
@@ -436,12 +447,200 @@ public class QuestionController {
                     "success","ok",questions,questionCount
                 ));
             }
-            return ResponseEntity.status(400).body(new GetListWithPagingSearchResponse(
+            return ResponseEntity.status(200).body(new GetListWithPagingSearchResponse(
                     "failed","questions not found",null,0
             ));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new GetListWithPagingSearchResponse(
                "failed","Internal server error",null,0
+            ));
+        }
+
+    }
+
+    @PostMapping("/getCategoryList")
+    public ResponseEntity<GetListWithPagingSearchResponse> getCategoryList(@RequestBody GetListWithPagingSearchRequest request) {
+        try {
+            List<Category> categories = categoryService.getCategories(request.getPage(),request.getLimit(),request.getSearch());
+
+            long categoryCount = categoryRepo.getCategoryCountWithSearch(request.getSearch());
+            if(categories!= null && !categories.isEmpty()){
+                return ResponseEntity.status(200).body(new GetListWithPagingSearchResponse(
+                    "success","ok",categories,categoryCount
+                ));
+            }
+            return ResponseEntity.status(200).body(new GetListWithPagingSearchResponse(
+                    "failed","categories not found",null,0
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new GetListWithPagingSearchResponse(
+               "failed","Internal server error",null,0
+            ));
+        }
+
+    }
+
+    @PostMapping("/getDifficultyList")
+    public ResponseEntity<GetListWithPagingSearchResponse> getDifficultyList(@RequestBody GetListWithPagingSearchRequest request) {
+        try {
+            List<Difficulty> difficulties = difficultyService.getDifficulties(request.getPage(),request.getLimit(),request.getSearch());
+
+            long difficultyCount = difficultyRepo.getDifficultyCountWithSearch(request.getSearch());
+            if(difficulties!= null && !difficulties.isEmpty()){
+                return ResponseEntity.status(200).body(new GetListWithPagingSearchResponse(
+                    "success","ok",difficulties,difficultyCount
+                ));
+            }
+            return ResponseEntity.status(200).body(new GetListWithPagingSearchResponse(
+                    "failed","difficulties not found",null,0
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new GetListWithPagingSearchResponse(
+               "failed","Internal server error",null,0
+            ));
+        }
+
+    }
+
+    @PostMapping("/getQuestionTypeList")
+    public ResponseEntity<GetListWithPagingSearchResponse> getQuestionTypeList(@RequestBody GetListWithPagingSearchRequest request) {
+        try {
+            List<QuestionType> questionTypes = questionTypeService.getQuestionTypes(request.getPage(),request.getLimit(),request.getSearch());
+
+            long questionTypeCount = questionTypeRepo.getQuestionTypeCountWithSearch(request.getSearch());
+            if(questionTypes!= null && !questionTypes.isEmpty()){
+                return ResponseEntity.status(200).body(new GetListWithPagingSearchResponse(
+                    "success","ok",questionTypes,questionTypeCount
+                ));
+            }
+            return ResponseEntity.status(200).body(new GetListWithPagingSearchResponse(
+                    "failed","questionTypes not found",null,0
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new GetListWithPagingSearchResponse(
+               "failed","Internal server error",null,0
+            ));
+        }
+
+    }
+    @PostMapping("/updateCategory")
+    public ResponseEntity<BaseResponse> updateCategory(@RequestBody UpdateCategoryRequest request) {
+        try {
+           
+            Category category = request.getCategory();
+            if(categoryService.updateCategory(category, category.getCategoryId())>0){
+                return ResponseEntity.status(200).body(new BaseResponse(
+                    "success","category updated successfully"
+                ));
+            }
+            return ResponseEntity.status(400).body(new BaseResponse(
+                "failed","unable to update category"
+            ));
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(500).body(new BaseResponse(
+               "failed","Internal server error"
+            ));
+        }
+
+    }
+
+    @PostMapping("/updateDifficulty")
+    public ResponseEntity<BaseResponse> updateDifficulty(@RequestBody UpdateDifficultyRequest request) {
+        try {
+           
+            Difficulty difficulty = request.getDifficulty();
+            if(difficultyService.updateDifficulty(difficulty, difficulty.getDifficultyId())>0){
+                return ResponseEntity.status(200).body(new BaseResponse(
+                    "success","difficulty updated successfully"
+                ));
+            }
+            return ResponseEntity.status(400).body(new BaseResponse(
+                "failed","unable to update difficulty"
+            ));
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(500).body(new BaseResponse(
+               "failed","Internal server error"
+            ));
+        }
+
+    }
+    @PostMapping("/updateQuestionType")
+    public ResponseEntity<BaseResponse> updateQuestionType(@RequestBody UpdateQuestionTypeRequest request) {
+        try {
+           
+            QuestionType questionType = request.getQuestionType();
+            if(questionTypeService.updateQuestionType(questionType, questionType.getQuestionTypeId())>0){
+                return ResponseEntity.status(200).body(new BaseResponse(
+                    "success","questionType updated successfully"
+                ));
+            }
+            return ResponseEntity.status(400).body(new BaseResponse(
+                "failed","unable to update questionType"
+            ));
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(500).body(new BaseResponse(
+               "failed","Internal server error"
+            ));
+        }
+
+    }
+
+    @PostMapping("/deleteCategory")
+    public ResponseEntity<BaseResponse> deleteCategory(@RequestBody DeleteCategoryRequest request) {
+        try {
+            if(categoryService.deleteCategory(request.getCategoryId())>0){
+                return ResponseEntity.status(200).body(new BaseResponse(
+                    "success","category deleted successfully"
+                ));
+            }
+            return ResponseEntity.status(400).body(new BaseResponse(
+                "failed","unable to delete category"
+            ));
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(500).body(new BaseResponse(
+               "failed","Internal server error"
+            ));
+        }
+
+    }
+    @PostMapping("/deleteDifficulty")
+    public ResponseEntity<BaseResponse> deleteDifficulty(@RequestBody DeleteDifficultyRequest request) {
+        try {
+            if(difficultyService.deleteDifficulty(request.getDifficultyId())>0){
+                return ResponseEntity.status(200).body(new BaseResponse(
+                    "success","difficulty deleted successfully"
+                ));
+            }
+            return ResponseEntity.status(400).body(new BaseResponse(
+                "failed","unable to delete difficulty"
+            ));
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(500).body(new BaseResponse(
+               "failed","Internal server error"
+            ));
+        }
+
+    }
+    @PostMapping("/deleteQuestionType")
+    public ResponseEntity<BaseResponse> deleteQuestionType(@RequestBody DeleteQuestionTypeRequest request) {
+        try {
+            if(questionTypeService.deleteQuestionType(request.getQuestionTypeId())>0){
+                return ResponseEntity.status(200).body(new BaseResponse(
+                    "success","questionType deleted successfully"
+                ));
+            }
+            return ResponseEntity.status(400).body(new BaseResponse(
+                "failed","unable to delete questionType"
+            ));
+        } catch (Exception e) {
+            System.out.println(e);
+            return ResponseEntity.status(500).body(new BaseResponse(
+               "failed","Internal server error"
             ));
         }
 
