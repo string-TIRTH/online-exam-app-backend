@@ -3,7 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package com.oea.online_exam_app.Requests.Exam;
+package com.oea.online_exam_app.DTO;
+
+import java.time.LocalTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,8 +18,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubmitMCQQuestionRequest {
-    private int questionSubmissionId;
-    private int optionId;
-    private int statusId;
+public class ExamSubmissionDTO {
+    private int examSubmissionId;
+    private String studentName;
+    private String studentEmail;
+    private int scoredMarks;
+    private int completedInMinutes;
 }

@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubmitMCQQuestionRequest {
-    private int questionSubmissionId;
-    private int optionId;
-    private int statusId;
+public class ReplaceExamQuestionRequest {
+    private int examId;
+    private int oldExamQuestionId;
+    private int newQuestionId;
 }

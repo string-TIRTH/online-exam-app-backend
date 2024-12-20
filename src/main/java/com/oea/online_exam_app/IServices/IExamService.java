@@ -7,8 +7,10 @@ package com.oea.online_exam_app.IServices;
 
 import java.util.List;
 
+import com.oea.online_exam_app.DTO.ExamResultDetailDTO;
 import com.oea.online_exam_app.DTO.QuestionsDTO;
 import com.oea.online_exam_app.Models.Exam;
+import com.oea.online_exam_app.Models.User;
 
 /**
  *
@@ -20,8 +22,11 @@ public interface IExamService {
     public int deleteExam(int examId);
     public Exam getExamById(int examId);
     public List<Exam> getAllExams(int page,int limit);
-    public QuestionsDTO getExamQuestions(int examId,int userId);
-    public int updateSelectedOption(int userId,int questionId,int examSubmissionId,int optionId,int statusId);
-    public int submitCode(int userId,int questionId,int examSubmissionId,String code);
-    public int submitExam(int userId,int examSubmissionId);
+    public QuestionsDTO getExamQuestions(Exam exam,User user);
+    public int submitCode(int programmingSubmissionId,String code);
+    public int submitExam(int examSubmissionId);
+    public List<Exam> getExams(int page,int limit,String search);
+    public int updateSelectedOption(int questionSubmissionId,int optionId, int statusId) ;
+    public List<ExamResultDetailDTO> getExamResultDetails(int page,int limit,String search);
+    
 }

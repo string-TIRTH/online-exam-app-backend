@@ -17,6 +17,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetExamQuestionsRequest {
-    private int examId;
-    private int userId;
+    private String examCode;
 }

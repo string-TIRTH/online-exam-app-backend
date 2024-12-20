@@ -21,5 +21,8 @@ import lombok.NoArgsConstructor;
 public class GetExamQuestionsResponse {
     private String status;
     private String message;
+    private int examSubmissionId;
     private QuestionsDTO questions;
+    private int remainingTime;
+    private int totalTime;
 }

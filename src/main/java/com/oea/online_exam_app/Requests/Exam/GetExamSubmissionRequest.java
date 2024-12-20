@@ -3,7 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package com.oea.online_exam_app.Requests.Student;
+package com.oea.online_exam_app.Requests.Exam;
+
+import com.oea.online_exam_app.Requests.Base.GetListWithPagingSearchRequest;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,8 +16,8 @@ import lombok.NoArgsConstructor;
  * @author tirth
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class DeleteStudentRequest {
-    private int studentId;
+@AllArgsConstructor
+public class GetExamSubmissionRequest extends GetListWithPagingSearchRequest{
+    private int examId;
 }

@@ -16,6 +16,7 @@ import com.oea.online_exam_app.Models.Exam;
 import com.oea.online_exam_app.Models.ExamQuestions;
 import com.oea.online_exam_app.Models.Question;
 import com.oea.online_exam_app.Repo.ExamQuestionsRepo;
+import com.oea.online_exam_app.Repo.ExamRepo;
 import com.oea.online_exam_app.Repo.QuestionRepo;
 
 /**
@@ -30,6 +31,10 @@ public class ExamQuestionsService implements IExamQuestionsService{
 
     @Autowired
     private QuestionRepo questionsRepo;
+    
+    @Autowired
+    private ExamRepo examRepo;
+
 
     @Override
     public int createExamQuestion(Exam exam,Question question) {
@@ -93,20 +98,38 @@ public class ExamQuestionsService implements IExamQuestionsService{
     public int updateExamQuestionByIds(int examId, int oldExamQuestionId, int newQuestionId) {
         try {   
             questionsRepo.findById(newQuestionId).orElseThrow(() -> new IllegalArgumentException("Invalid questionsId"));
-            System.out.println(examId);
-            System.out.println(oldExamQuestionId);
-            System.out.println(newQuestionId);
             examQuestionsRepo.setNewQuestionId(examId, oldExamQuestionId, newQuestionId);
-            System.out.println("Tirth");
             return 1;
         } catch (Exception e) {
-            System.out.println("Tirth");
             System.out.println(e.toString());
             return 0;
         }
     }
 
-    
+    @Override
+    public List<ExamQuestions> getExamQuestionByExamId(int examId) {
+        try {   
+            Exam exam = examRepo.findById(examId).orElseThrow(()-> new IllegalArgumentException("Invalid Exam Id"));
+            List<ExamQuestions> examQuestion = examQuestionsRepo.findByExam(exam);
+            
+            return examQuestion;
+        } catch (Exception e) {
+            System.out.println(e.getCause());
+            return null;
+        }
+    }
 
+    @Override
+    public List<Question> getReplacementQuestions(int categoryId,int questionTypeId,int examId) {
+        try {   
+            Exam exam = examRepo.findById(examId).orElseThrow(()-> new IllegalArgumentException("Invalid Exam Id"));
+            List<Question> replacementQuestions = examQuestionsRepo.findReplacementQuestions(categoryId,questionTypeId,examId);
+            
+            return replacementQuestions;
+        } catch (Exception e) {
+            System.out.println(e.getCause());
+            return null;
+        }
+    }
    
 }

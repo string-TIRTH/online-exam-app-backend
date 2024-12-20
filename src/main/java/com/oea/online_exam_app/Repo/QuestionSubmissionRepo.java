@@ -13,7 +13,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.oea.online_exam_app.Models.ExamSubmission;
 import com.oea.online_exam_app.Models.QuestionSubmission;
+import com.oea.online_exam_app.Models.User;
 
 import jakarta.transaction.Transactional;
 
@@ -26,19 +28,20 @@ import jakarta.transaction.Transactional;
 public interface QuestionSubmissionRepo extends JpaRepository<QuestionSubmission, Integer> {
 
     Optional<QuestionSubmission> findById(int id);
+    List<QuestionSubmission> findByExamSubmissionAndUser(ExamSubmission examSubmission,User user);
 
-    @Query(value = "SELECT qs.* from question_submission qs JOIN question_options qo on qs.selected_option_id = qo.option_id WHERE qo.is_correct = 1  AND qs.exam_submission_id= 1", nativeQuery = true)
+    @Query(value = "SELECT qs.* from question_submission qs JOIN question_options qo on qs.selected_option_id = qo.option_id WHERE qo.is_correct = 1  AND qs.exam_submission_id= :examSubmissionId", nativeQuery = true)
     public List<QuestionSubmission> getCorrectSubmissions(int examSubmissionId); 
     
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE question_submission SET selected_option_id = :optionId, question_submission_status_id = :statusId WHERE user_id = :userId AND exam_submission_id = :examSubmissionId AND question_id = :questionId", nativeQuery = true)
-    public int updateOptionAndStatus(int userId,int examSubmissionId,int questionId,Integer optionId,int statusId);
+    @Query(value = "UPDATE question_submission SET selected_option_id = :optionId, question_submission_status_id = :statusId WHERE question_submission_id = :questionSubmissionId", nativeQuery = true)
+    public int updateOptionAndStatus(int questionSubmissionId,Integer optionId,int statusId);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE programming_submission SET submitted_code = :code WHERE user_id = :userId AND exam_submission_id = :examSubmissionId AND question_id = :questionId", nativeQuery = true)
-    public int updateProgrammingCode(int userId,int examSubmissionId,int questionId,String code);
+    @Query(value = "UPDATE programming_submission SET submitted_code = :code WHERE programming_submission_id = :programmingSubmissionId", nativeQuery = true)
+    public int updateProgrammingCode(int programmingSubmissionId,String code);
 }
    

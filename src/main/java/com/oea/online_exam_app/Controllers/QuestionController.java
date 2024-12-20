@@ -273,7 +273,12 @@ public class QuestionController {
                 }else if (question.getQuestionType().getQuestionTypeText().equals(QuestionTypeEnum.Programming.name())){
                     List<QuestionExample> examples = request.getQuestion().getExamples();
                     examples.forEach(example->{
-                        questionExampleService.updateQuestionExample(example, example.getExampleId());
+                        if(example.getExampleId() == -1){
+                            example.setQuestion(question);
+                            questionExampleService.createQuestionExample(example);
+                        }else {
+                            questionExampleService.updateQuestionExample(example, example.getExampleId());
+                        }
                     });
                 }
                 return ResponseEntity.status(200).body(new BaseResponse(

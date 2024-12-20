@@ -52,13 +52,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = getTokenFromRequest(request);
             if (token != null && jwtUtil.validateToken(token)) {
                 String email = jwtUtil.getEmailFromToken(token);
-                
+                System.out.println(email);
                 String role = userRepo.findByEmail(email).orElseThrow(()-> new InvalidParameterException("Invalid Email")).getRole().getRole();
+                System.out.println("Role fetched from DB: " + role);
                 List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
                 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(email, null, authorities);
 
+                System.out.println("Authorities: " + authorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
@@ -70,7 +72,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String getTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }

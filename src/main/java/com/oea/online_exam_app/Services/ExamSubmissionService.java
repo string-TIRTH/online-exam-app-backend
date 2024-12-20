@@ -5,9 +5,14 @@
 
 package com.oea.online_exam_app.Services;
 
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.oea.online_exam_app.DTO.ExamSubmissionDTO;
 import com.oea.online_exam_app.IServices.IExamSubmissionService;
 import com.oea.online_exam_app.Models.ExamSubmission;
 import com.oea.online_exam_app.Repo.ExamSubmissionRepo;
@@ -61,6 +66,29 @@ public class ExamSubmissionService implements IExamSubmissionService{
         } catch (Exception e) {
             System.out.println(e.getCause());
             return 0;
+        }
+    }
+
+    @Override
+    public List<ExamSubmissionDTO> getExamSubmissions(int examId,int page,int limit,String search) {
+        try {
+            List<ExamSubmissionDTO> examSubmissionDTOs = new ArrayList<>();
+            List<ExamSubmission> examSubmissions;
+            int offset = (page - 1) * limit;
+            if(search.trim().isBlank()){
+                examSubmissions = examSubmissionRepo.getExamSubmissionList(examId, limit, offset);
+
+            }else{
+                examSubmissions = examSubmissionRepo.getExamSubmissionListWithSearch(examId,limit,offset,search);
+            }
+            for (ExamSubmission examSub : examSubmissions) {
+    
+                examSubmissionDTOs.add(new ExamSubmissionDTO(examSub.getExamSubmissionId(),examSub.getUser().getFullName(),examSub.getUser().getEmail(),examSub.getScoredMarks(),(int) Duration.between(examSub.getExamStartTime(),examSub.getExamEndTime()).toMinutes()));
+            }
+            return examSubmissionDTOs;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
         }
     }
 }

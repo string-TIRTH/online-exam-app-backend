@@ -21,7 +21,7 @@ import com.oea.online_exam_app.Models.Role;
 public interface RoleRepo extends JpaRepository<Role, Integer>{
     Role findById(int roleId);
     Role findByRole(String role);
-     @Query(value = "SELECT * FROM role_master ORDER BY role_id OFFSET :skip ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
+    @Query(value = "SELECT * FROM role_master ORDER BY role_id OFFSET :skip ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
     List<Role> getRoleList(int limit,int skip);
 
     @Query(value = "SELECT * FROM role_master WHERE role_id LIKE CONCAT(:search,'%') OR role LIKE CONCAT('%',:search,'%') ORDER BY role_id OFFSET :skip ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)

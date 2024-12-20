@@ -38,6 +38,7 @@ public class JwtUtil {
 
     public String generateToken(String email,String role) {
         try {
+            System.out.println("Token generated for email: " + email + " with role: " + role);
             return Jwts.builder()
                     .setSubject(email)
                     .claim("role",role)

@@ -6,7 +6,7 @@
 package com.oea.online_exam_app.Requests.Exam;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -24,20 +24,29 @@ public class CreateExamRequest {
 
     private String examCode;
     private LocalDate examDate;
-    private LocalDateTime examStartTime;
-    private LocalDateTime examEndTime;
+    private LocalTime examStartTime;
+    private LocalTime examEndTime;
     private int examDurationInMinutes;
-    private int passingCriteria;
+    private String passingCriteria;
     private int passingValue;
     private int totalMarks;
     
-    private List<CategoryQuestion> categoryWiseQuestions;
+    private List<QuestionsMCQ> mcqQuestions;
+    private List<QuestionsPro> proQuestions;
     
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    static public class CategoryQuestion{
+    static public class QuestionsMCQ{
         private int categoryId;
+        private int noOfQuestions;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    static public class QuestionsPro{
+        private int difficultyId;
         private int noOfQuestions;
     }
 }

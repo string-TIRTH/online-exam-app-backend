@@ -21,5 +21,7 @@ public interface IExamQuestionsService {
     public int updateExamQuestion(int examQuestionId, ExamQuestions examQuestion);
     public int updateExamQuestionByIds(int examId, int oldExamQuestionId, int newQuestionId);
     public int deleteExam(int examQuestionId);
+    public List<ExamQuestions> getExamQuestionByExamId(int examId);
+    public List<Question> getReplacementQuestions(int categoryId,int questionTypeId,int examId);
 
 }

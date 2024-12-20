@@ -7,6 +7,8 @@ package com.oea.online_exam_app.DTO;
 
 import java.util.List;
 
+import com.oea.online_exam_app.Models.QuestionSubmissionStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,8 +28,9 @@ public class QuestionsDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     static public class MCQQuestion {
-        private int questionId;
+        private int questionSubmissionId;
         private String questionText;
+        private QuestionSubmissionStatus questionSubmissionStatus;
         private List<QuestionOption> options;
 
         @Data
@@ -36,6 +39,7 @@ public class QuestionsDTO {
         static public class QuestionOption {
             private int optionId;
             private String optionText;
+            private boolean isSelected;
         }
     }
 
@@ -43,10 +47,10 @@ public class QuestionsDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     static public class ProgrammingQuestion {
-        private int questionId;
+        private int programmingSubmissionId;
         private String questionText;
+        private String submittedCode;
         private List<ProgrammingExample> examples;
-
         @Data
         @NoArgsConstructor
         @AllArgsConstructor

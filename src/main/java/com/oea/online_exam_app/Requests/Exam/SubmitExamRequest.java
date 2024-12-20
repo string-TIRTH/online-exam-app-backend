@@ -17,6 +17,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubmitExamRequest {
-    private int userId;
     private int examSubmissionId;
 }

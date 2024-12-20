@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package com.oea.online_exam_app.Requests.Exam;
+package com.oea.online_exam_app.Requests.Base;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,10 +14,8 @@ import lombok.NoArgsConstructor;
  * @author tirth
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class SubmitMCQQuestionRequest {
-    private int questionSubmissionId;
-    private int optionId;
-    private int statusId;
+@NoArgsConstructor
+public class GetByIdRequest {
+    private int id;
 }

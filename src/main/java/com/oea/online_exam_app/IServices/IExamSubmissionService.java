@@ -5,6 +5,9 @@
 
 package com.oea.online_exam_app.IServices;
 
+import java.util.List;
+
+import com.oea.online_exam_app.DTO.ExamSubmissionDTO;
 import com.oea.online_exam_app.Models.ExamSubmission;
 
 /**
@@ -15,4 +18,5 @@ public interface IExamSubmissionService {
     public int createExamSubmission(ExamSubmission examSubmission);
     public int updateExamSubmission(ExamSubmission examSubmission, int examSubmissionId);
     public int deleteExamSubmission(int examSubmissionId);
+    public List<ExamSubmissionDTO> getExamSubmissions(int examId,int page,int limit,String search);
 }

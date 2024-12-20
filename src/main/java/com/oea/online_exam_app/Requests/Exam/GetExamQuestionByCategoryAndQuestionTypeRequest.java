@@ -3,9 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package com.oea.online_exam_app.Requests.Student;
-
-import com.oea.online_exam_app.Models.User;
+package com.oea.online_exam_app.Requests.Exam;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,8 +14,10 @@ import lombok.NoArgsConstructor;
  * @author tirth
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class UpdateStudentRequest {
-    private User student;
+@AllArgsConstructor
+public class GetExamQuestionByCategoryAndQuestionTypeRequest {
+    private int categoryId;
+    private int questionTypeId;
+    private int examId;
 }

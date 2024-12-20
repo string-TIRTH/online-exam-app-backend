@@ -3,7 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package com.oea.online_exam_app.Requests.Student;
+package com.oea.online_exam_app.DTO;
+
+import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,11 +16,12 @@ import lombok.NoArgsConstructor;
  * @author tirth
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class CreateStudentRequest {
-    private String fullName;
-    private String mobileNumber;
-    private String email;
-    private String password;
+@AllArgsConstructor
+public class ExamResultDetailDTO {
+    private int examId;
+    private String examCode;
+    private LocalDate examDate;
+    private int totalStudents;
+    private int qualifiedStudents;
 }

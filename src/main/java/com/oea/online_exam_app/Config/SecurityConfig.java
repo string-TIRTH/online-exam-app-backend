@@ -41,9 +41,10 @@ public class SecurityConfig {
             .cors()
             .and()
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/auth/**").permitAll() 
-                .requestMatchers("/api/v1/question/**").hasAuthority("Admin")
-                .requestMatchers("/api/v1/student/**").hasAuthority("Admin")
+            .requestMatchers("/api/v1/auth/**").permitAll()
+            .requestMatchers("/api/v1/exam/**").hasAnyAuthority("Admin","Student") 
+            .requestMatchers("/api/v1/question/**").hasAuthority("Admin")
+            .requestMatchers("/api/v1/user/**").hasAuthority("Admin")
                 .anyRequest().authenticated())
             .addFilterBefore(new JwtAuthenticationFilter(jwtUtil,userRepo), UsernamePasswordAuthenticationFilter.class);
 
