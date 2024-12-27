@@ -25,4 +25,5 @@ public class GetExamQuestionsResponse {
     private QuestionsDTO questions;
     private int remainingTime;
     private int totalTime;
+    private int code;
 }

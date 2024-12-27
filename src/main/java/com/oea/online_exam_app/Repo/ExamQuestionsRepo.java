@@ -31,6 +31,12 @@ public interface ExamQuestionsRepo extends JpaRepository<ExamQuestions, Integer>
     @Query("SELECT q FROM Question q JOIN ExamQuestions eq ON q.questionId = eq.question.questionId WHERE eq.exam.examId = :examId AND q.questionType.questionTypeId = :questionTypeId")
     public List<Question> findByExamIdAndQuestionTypeId(int examId,int questionTypeId);
     
+    @Query(value = "SELECT COUNT(*) FROM exam_questions eq JOIN questions q ON eq.question_id = q.question_id WHERE eq.exam_id= :examId AND q.question_type_id = 1", nativeQuery = true)
+    public long getMcqQuestionCount(int examId);
+
+    @Query(value = "SELECT COUNT(*) FROM exam_questions eq JOIN questions q ON eq.question_id = q.question_id WHERE eq.exam_id= :examId AND q.question_type_id = 2", nativeQuery = true)
+    public long getProQuestionCount(int examId);
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE exam_questions SET question_id = :newQuestionId WHERE exam_question_id = :oldQuestionId AND exam_id = :examId", nativeQuery = true)

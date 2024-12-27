@@ -64,7 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
-            System.err.println("Error during JWT authentication: " + e);
+            System.out.println("Error during JWT authentication: " + e);
         }
 
         filterChain.doFilter(request, response);
@@ -75,6 +75,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
+        
         return null;
     }
     public String getRoleFromToken(String token) {

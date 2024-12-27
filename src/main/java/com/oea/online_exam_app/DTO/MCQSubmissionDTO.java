@@ -16,11 +16,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExamSubmissionDTO {
-    private int examSubmissionId;
-    private String studentName;
-    private String studentEmail;
-    private int scoredMarks;
-    private int correctCodeSubmission;
-    private int completedInMinutes;
+public class MCQSubmissionDTO {
+    private int questionSubmissionId;
+    private String questionText;
+    private String selectedOptionText;
+    private Boolean isCorrect;
 }

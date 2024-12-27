@@ -276,6 +276,8 @@ public class ExamService implements IExamService {
     public int submitExam(int examSubmissionId) {
         try {
             ExamSubmission examSubmission = examSubmissionRepo.findById(examSubmissionId).orElseThrow(()-> new InvalidAttributesException("Invalid ExamSubmissionId"));
+            
+            
             int scoredMarks = calculateScoredMarks(examSubmissionId);
             examSubmission.setScoredMarks(scoredMarks);
             if(LocalTime.now().isAfter(examSubmission.getExam().getExamEndTime())){
@@ -322,7 +324,7 @@ public class ExamService implements IExamService {
                     }
                 }
                 if(passingCriteria.getPassingCriteriaText().equals(PassingCriteriaEnum.Top.name())){
-                    totalQualifiedStudents=passingValue;
+                    totalQualifiedStudents=passingValue>examSubmissions.size()?examSubmissions.size():passingValue;
                 }
                 examResultDetailDTOs.add(new ExamResultDetailDTO(exam.getExamId(),exam.getExamCode(),exam.getExamDate(),totalStudents,totalQualifiedStudents));
                 
@@ -341,8 +343,8 @@ public class ExamService implements IExamService {
         // int totalScoredMarks = 0;
 
         // For v1 
-        List<QuestionSubmission> questions = questionSubmissionRepo.getCorrectSubmissions(examSubmissionId);
-        return questions.size();
+        int totalMarks = questionSubmissionRepo.getCorrectSubmissions(examSubmissionId);
+        return totalMarks;
 
         // For v2 
         // List<QuestionSubmission> questions = questionSubmissionRepo.getCorrectSubmissions(examSubmissionId);

@@ -42,9 +42,9 @@ public class SecurityConfig {
             .and()
             .authorizeHttpRequests(auth -> auth
             .requestMatchers("/api/v1/auth/**").permitAll()
-            .requestMatchers("/api/v1/exam/**").hasAnyAuthority("Admin","Student") 
-            .requestMatchers("/api/v1/question/**").hasAuthority("Admin")
-            .requestMatchers("/api/v1/user/**").hasAuthority("Admin")
+            .requestMatchers("/api/v1/exam/**").hasAnyAuthority("Admin","Student","Examiner") 
+            .requestMatchers("/api/v1/question/**").hasAnyAuthority("Admin","Examiner")
+            .requestMatchers("/api/v1/user/**").hasAnyAuthority("Admin","Examiner")
                 .anyRequest().authenticated())
             .addFilterBefore(new JwtAuthenticationFilter(jwtUtil,userRepo), UsernamePasswordAuthenticationFilter.class);
 

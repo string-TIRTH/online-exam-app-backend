@@ -30,6 +30,9 @@ public class ProgrammingSubmission {
     @Column(name = "programming_submission_id")
     private int programmingSubmissionId;
 
+    @Column(name = "is_correct", nullable = true)
+    private Boolean isCorrect;
+
     @ManyToOne
     @JoinColumn(name = "exam_submission_id", nullable = false)
     private ExamSubmission examSubmission;

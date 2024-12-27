@@ -5,6 +5,9 @@
 
 package com.oea.online_exam_app.IServices;
 
+import java.util.List;
+
+import com.oea.online_exam_app.DTO.MCQSubmissionDTO;
 import com.oea.online_exam_app.Models.QuestionSubmission;
 
 /**
@@ -15,4 +18,5 @@ public interface IQuestionSubmissionService {
     public int createQuestionSubmission(QuestionSubmission questionSubmission);
     public int updateQuestionSubmission(QuestionSubmission questionSubmission, int questionSubmissionId);
     public int deleteQuestionSubmission(int questionSubmissionId);
+    public List<MCQSubmissionDTO> getQuestionSubmissions(int examId,int page,int limit,String search);
 }

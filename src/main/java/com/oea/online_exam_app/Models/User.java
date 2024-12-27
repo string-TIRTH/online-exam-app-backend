@@ -34,7 +34,7 @@ public class User {
     private String password;
 
     @ManyToOne
-    @JoinColumn(name = "role_id", referencedColumnName = "roleId", nullable = false) 
+    @JoinColumn(name = "role_id",referencedColumnName = "roleId", nullable = false) 
     private Role role;  
 
     private LocalDate createdAt = LocalDate.now();

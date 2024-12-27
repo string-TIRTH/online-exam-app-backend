@@ -5,9 +5,13 @@
 
 package com.oea.online_exam_app.Services;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.oea.online_exam_app.DTO.MCQSubmissionDTO;
 import com.oea.online_exam_app.IServices.IQuestionSubmissionService;
 import com.oea.online_exam_app.Models.QuestionSubmission;
 import com.oea.online_exam_app.Repo.QuestionSubmissionRepo;
@@ -60,6 +64,28 @@ public class QuestionsSubmissionService implements IQuestionSubmissionService{
             return 0;
         }
     }
+    @Override
+        public List<MCQSubmissionDTO> getQuestionSubmissions(int examId,int page,int limit,String search) {
+            try {
+                List<MCQSubmissionDTO> questionSubmissionDTOs = new ArrayList<>();
+                List<QuestionSubmission> questionSubmissions;
+                int offset = (page - 1) * limit;
+                if(search.trim().isBlank()){
+                    questionSubmissions = questionSubmissionRepo.getQuestionSubmissionList(examId, limit, offset);
 
+                }else{
+                    questionSubmissions = questionSubmissionRepo.getQuestionSubmissionListWithSearch(examId,limit,offset,search);
+                }
+                for (QuestionSubmission questionSub : questionSubmissions) {
+        
+                    questionSubmissionDTOs.add(new MCQSubmissionDTO(questionSub.getQuestionSubmissionId(),questionSub.getQuestion().getQuestionText(),questionSub.getSelectedOption().getOptionText(),questionSub.getIsCorrect()));
+                }
+                System.out.println(questionSubmissionDTOs);
+                return questionSubmissionDTOs;
+            } catch (Exception e) {
+                System.out.println(e);
+                return null;
+            }
+        }
     
 }

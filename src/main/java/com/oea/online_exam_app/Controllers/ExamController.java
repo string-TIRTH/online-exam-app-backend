@@ -25,7 +25,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.oea.online_exam_app.DTO.ExamResultDetailDTO;
 import com.oea.online_exam_app.DTO.ExamSubmissionDTO;
+import com.oea.online_exam_app.DTO.MCQSubmissionDTO;
+import com.oea.online_exam_app.DTO.ProSubmissionDTO;
 import com.oea.online_exam_app.DTO.QuestionsDTO;
+import com.oea.online_exam_app.Enums.ExamStatusCodeEnum;
 import com.oea.online_exam_app.Enums.QuestionTypeEnum;
 import com.oea.online_exam_app.Models.Category;
 import com.oea.online_exam_app.Models.Difficulty;
@@ -42,7 +45,9 @@ import com.oea.online_exam_app.Repo.ExamQuestionsRepo;
 import com.oea.online_exam_app.Repo.ExamRepo;
 import com.oea.online_exam_app.Repo.ExamSubmissionRepo;
 import com.oea.online_exam_app.Repo.PassingCriteriaRepo;
+import com.oea.online_exam_app.Repo.ProgrammingSubmissionRepo;
 import com.oea.online_exam_app.Repo.QuestionRepo;
+import com.oea.online_exam_app.Repo.QuestionSubmissionRepo;
 import com.oea.online_exam_app.Repo.QuestionTypeRepo;
 import com.oea.online_exam_app.Repo.UserRepo;
 import com.oea.online_exam_app.Requests.Base.GetByIdRequest;
@@ -52,7 +57,9 @@ import com.oea.online_exam_app.Requests.Exam.DeleteExamRequest;
 import com.oea.online_exam_app.Requests.Exam.GetExamQuestionByCategoryAndQuestionTypeRequest;
 import com.oea.online_exam_app.Requests.Exam.GetExamQuestionsRequest;
 import com.oea.online_exam_app.Requests.Exam.GetExamSubmissionRequest;
+import com.oea.online_exam_app.Requests.Exam.GetQuestionSubmissionRequest;
 import com.oea.online_exam_app.Requests.Exam.ReplaceExamQuestionRequest;
+import com.oea.online_exam_app.Requests.Exam.SubmitCodeReviewRequest;
 import com.oea.online_exam_app.Requests.Exam.SubmitExamRequest;
 import com.oea.online_exam_app.Requests.Exam.SubmitMCQQuestionRequest;
 import com.oea.online_exam_app.Requests.Exam.SubmitProgrammingQuestionRequest;
@@ -62,10 +69,13 @@ import com.oea.online_exam_app.Responses.BaseResponse;
 import com.oea.online_exam_app.Responses.Exam.GetExamPassingCriteriaResponse;
 import com.oea.online_exam_app.Responses.Exam.GetExamQuestionsResponse;
 import com.oea.online_exam_app.Responses.Exam.GetExamResponse;
+import com.oea.online_exam_app.Responses.Exam.GetExamSubmissionListResponse;
 import com.oea.online_exam_app.Responses.Exam.GetExamsResponse;
 import com.oea.online_exam_app.Services.ExamQuestionsService;
 import com.oea.online_exam_app.Services.ExamService;
 import com.oea.online_exam_app.Services.ExamSubmissionService;
+import com.oea.online_exam_app.Services.ProgrammingSubmissionService;
+import com.oea.online_exam_app.Services.QuestionsSubmissionService;
 import com.oea.online_exam_app.Views.View;
 
 /**
@@ -111,6 +121,18 @@ public class ExamController {
 
     @Autowired
     ExamSubmissionService examSubmissionService;
+   
+    @Autowired
+    QuestionsSubmissionService questionsSubmissionService;
+
+    @Autowired
+    ProgrammingSubmissionService programmingSubmissionService;
+   
+    @Autowired
+    QuestionSubmissionRepo questionSubmissionRepo;
+   
+    @Autowired
+    ProgrammingSubmissionRepo programmingSubmissionRepo;
 
 
     @PostMapping("/create")
@@ -238,6 +260,7 @@ public class ExamController {
             return ResponseEntity.status(500).body(getAllExamsResponse);
         }
     }
+
     public List<Question> selectRandomMCQQuestions(int noOfQuestions,Category category,QuestionType questionType){
 
         List<Question> questions = questionRepo.findRandomMCQQuestionsByCategory(category.getCategoryId(), noOfQuestions,questionType.getQuestionTypeId());
@@ -280,27 +303,40 @@ public class ExamController {
     public ResponseEntity<GetExamQuestionsResponse> getExamsQuestions(@RequestBody GetExamQuestionsRequest request) {
         try {
             String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            System.out.println(email);
             User user = userRepo.findByEmail(email).orElseThrow(()-> new IllegalArgumentException("Invalid user"));      
-            Exam exam = examRepo.findByExamCode(request.getExamCode()).orElseThrow(() -> new IllegalArgumentException("Invalid examId"));
+            Exam exam = examRepo.findByExamCode(request.getExamCode()).orElseThrow(() -> new IllegalArgumentException(ExamStatusCodeEnum.InvalidCode.name()));
             
             QuestionsDTO questions = examService.getExamQuestions(exam,user);
             ExamSubmission examSubmission = examSubmissionRepo.findByUserAndExam(user,exam);
+            if(examSubmission.getScoredMarks()!= 0){
+                GetExamQuestionsResponse getExamQuestionsResponse = new GetExamQuestionsResponse(ExamStatusCodeEnum.AlreadySubmitted.name(),"Exam Over",-1,null,-1,-1,ExamStatusCodeEnum.AlreadySubmitted.getCode());
+                return ResponseEntity.status(200).body(getExamQuestionsResponse);
+            }
             LocalTime nowTime = LocalTime.now();
             LocalTime examStartTime = examSubmission.getExamStartTime().toLocalTime();
             LocalTime examEndTime = examSubmission.getExamEndTime().toLocalTime();
-
+            if(examEndTime.isBefore(nowTime)){
+                GetExamQuestionsResponse getExamQuestionsResponse = new GetExamQuestionsResponse(ExamStatusCodeEnum.Timeout.name(),"Exam Time Over",-1,null,-1,-1,ExamStatusCodeEnum.Timeout.getCode());
+                return ResponseEntity.status(200).body(getExamQuestionsResponse);
+            }
             int remainingTime = (int) Duration.between(nowTime, examEndTime).toMinutes();
             int totalTime = (int) Duration.between(examStartTime,examEndTime).toMinutes();
             if(!questions.getQuestionsMCQ().isEmpty() || !questions.getQuestionsPro().isEmpty() ){
-                GetExamQuestionsResponse getExamQuestionsResponse = new GetExamQuestionsResponse("success","OK",examSubmission.getExamSubmissionId(),questions,remainingTime,totalTime);
+                GetExamQuestionsResponse getExamQuestionsResponse = new GetExamQuestionsResponse(ExamStatusCodeEnum.InProgress.name(),"OK",examSubmission.getExamSubmissionId(),questions,remainingTime,totalTime,ExamStatusCodeEnum.InProgress.getCode());
                 return ResponseEntity.status(200).body(getExamQuestionsResponse);
             }
-            GetExamQuestionsResponse getExamQuestionsResponse = new GetExamQuestionsResponse("error","Unable to fetch questions",-1,null,-1,-1);
+            GetExamQuestionsResponse getExamQuestionsResponse = new GetExamQuestionsResponse(ExamStatusCodeEnum.SomeThingWentWrong.name(),"Unable to fetch questions",-1,null,-1,-1,ExamStatusCodeEnum.SomeThingWentWrong.getCode());
                 return ResponseEntity.status(400).body(getExamQuestionsResponse);
         } catch (Exception e) {
             System.out.println(e.getCause());
-            GetExamQuestionsResponse getExamQuestionsResponse = new GetExamQuestionsResponse("failed",
-                    "Error " + e.toString(),-1,null,-1,-1);
+            if(e.getMessage().equals(ExamStatusCodeEnum.InvalidCode.name())){
+                GetExamQuestionsResponse getExamQuestionsResponse = new GetExamQuestionsResponse(ExamStatusCodeEnum.InvalidCode.name(),
+                    "Invalid Exam Code",-1,null,-1,-1,ExamStatusCodeEnum.InvalidCode.getCode());
+                return ResponseEntity.status(400).body(getExamQuestionsResponse);
+            }
+            GetExamQuestionsResponse getExamQuestionsResponse = new GetExamQuestionsResponse(ExamStatusCodeEnum.ServerError.name(),
+                    "Error " + e.toString(),-1,null,-1,-1,ExamStatusCodeEnum.ServerError.getCode());
             return ResponseEntity.status(500).body(getExamQuestionsResponse);
         }
     }
@@ -337,25 +373,25 @@ public class ExamController {
         } catch (Exception e) {
             BaseResponse getExamQuestionsResponse = new BaseResponse("failed","Error " + e.toString());
             return ResponseEntity.status(200).body(getExamQuestionsResponse);
-        }
-    }
+        } 
+    } 
     @PostMapping("/submitExam")
     @Transactional
-    public ResponseEntity<BaseResponse> submitExam(@RequestBody SubmitExamRequest request) {
-        try {
+    public ResponseEntity<BaseResponse> submitExam(@RequestBody SubmitExamRequest request) { 
+        try { 
             String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             userRepo.findByEmail(email).orElseThrow(()-> new IllegalArgumentException("Invalid user")); 
             // check time 
-            if(examService.submitExam(request.getExamSubmissionId())!=1){
-                // throw new Error("Error while submitting question"); 
-            }    
+            if(examService.submitExam(request.getExamSubmissionId())!=1){ 
+                throw new Error("Error while submitting question"); 
+            } 
             BaseResponse generateResultMCQResponse = new BaseResponse("success","OK");
             return ResponseEntity.status(200).body(generateResultMCQResponse);
         } catch (Exception e) {
             BaseResponse getExamQuestionsResponse = new BaseResponse("failed","Error " + e.toString());
             return ResponseEntity.status(200).body(getExamQuestionsResponse);
-        }
-    }
+        } 
+    } 
 
     @GetMapping("/getPassingCriteria")
     public ResponseEntity<GetExamPassingCriteriaResponse> getPassingCriteria() {
@@ -471,10 +507,33 @@ public class ExamController {
     }
 
     @PostMapping("/getExamSubmissions")
-    public ResponseEntity<GetListWithPagingSearchResponse> getExamSubmissions(@RequestBody GetExamSubmissionRequest request) {
+    public ResponseEntity<GetExamSubmissionListResponse> getExamSubmissions(@RequestBody GetExamSubmissionRequest request) {
         try {   
             List<ExamSubmissionDTO> examSubmissions = examSubmissionService.getExamSubmissions(request.getExamId(),request.getPage(),request.getLimit(),request.getSearch());
             long examCount = examSubmissionRepo.getExamSubmissionCountWithSearch(request.getExamId(),request.getSearch());
+            if(examSubmissions!= null && !examSubmissions.isEmpty()){
+                Exam exam  = examRepo.findById(request.getExamId()).orElseThrow(() -> new IllegalArgumentException("Invalid examId"));
+                long proQuestionCount = examQuestionsRepo.getProQuestionCount(request.getExamId());
+                long mcqQuestionCount = examQuestionsRepo.getMcqQuestionCount(request.getExamId());
+                return ResponseEntity.status(200).body(new GetExamSubmissionListResponse(
+                    "success","ok",examSubmissions,examCount,exam.getTotalMarks(),(int)proQuestionCount,(int)mcqQuestionCount
+                ));
+            }
+            return ResponseEntity.status(200).body(new GetExamSubmissionListResponse(
+                    "failed","exams not found",null,0,0,0,0
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new GetExamSubmissionListResponse(
+               "failed","Internal server error",null,0,0,0,0
+            ));
+        }
+
+    }
+    @PostMapping("/getMCQSubmissions")
+    public ResponseEntity<GetListWithPagingSearchResponse> getMCQSubmissions(@RequestBody GetQuestionSubmissionRequest request) {
+        try {   
+            List<MCQSubmissionDTO> examSubmissions = questionsSubmissionService.getQuestionSubmissions(request.getExamSubmissionId(),request.getPage(),request.getLimit(),request.getSearch());
+            long examCount = questionSubmissionRepo.getQuestionSubmissionCountWithSearch(request.getExamSubmissionId(),request.getSearch());
             if(examSubmissions!= null && !examSubmissions.isEmpty()){
                 return ResponseEntity.status(200).body(new GetListWithPagingSearchResponse(
                     "success","ok",examSubmissions,examCount
@@ -490,5 +549,40 @@ public class ExamController {
         }
 
     }
+    
+    @PostMapping("/getProSubmissions")
+    public ResponseEntity<GetListWithPagingSearchResponse> getProSubmissions(@RequestBody GetQuestionSubmissionRequest request) {
+        try {   
+            List<ProSubmissionDTO> proSubmissionDTOs = programmingSubmissionService.getQuestionSubmissions(request.getExamSubmissionId(),request.getPage(),request.getLimit(),request.getSearch());
+            long examCount = programmingSubmissionRepo.getProgrammingSubmissionCountWithSearch(request.getExamSubmissionId(),request.getSearch());
+            if(proSubmissionDTOs!= null && !proSubmissionDTOs.isEmpty()){
+                return ResponseEntity.status(200).body(new GetListWithPagingSearchResponse(
+                    "success","ok",proSubmissionDTOs,examCount
+                ));
+            }
+            return ResponseEntity.status(200).body(new GetListWithPagingSearchResponse(
+                    "failed","exams not found",null,0
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new GetListWithPagingSearchResponse(
+               "failed","Internal server error",null,0
+            ));
+        }
+
+    }
+
+    @PostMapping("/submitCodeReview")
+    public ResponseEntity<BaseResponse> submitCodeReview(@RequestBody SubmitCodeReviewRequest request) {
+        try {   
+            if(programmingSubmissionService.submitCodeReview(request.getProgrammingSubmissionId(),request.getIsCorrect())>0){
+                return ResponseEntity.status(200).body(new BaseResponse("success","Code Review Submitted Successfully"));
+            }
+            return ResponseEntity.status(200).body(new BaseResponse("failed","Code Review Not Submitted"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new BaseResponse("failed","Internal server error"));
+        }
+
+    }
+    
     
 }
