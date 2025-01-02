@@ -15,7 +15,8 @@ public enum ExamStatusCodeEnum {
     AlreadySubmitted(3),
     SomeThingWentWrong(4),
     ServerError(5),
-    InvalidCode(6);
+    InvalidCode(6),
+    NotStarted(7);
     private final int code;
 
     ExamStatusCodeEnum(int code) {
