@@ -45,6 +45,7 @@ import com.oea.online_exam_app.Repo.CategoryRepo;
 import com.oea.online_exam_app.Repo.DifficultyRepo;
 import com.oea.online_exam_app.Repo.ExamQuestionsRepo;
 import com.oea.online_exam_app.Repo.ExamRepo;
+import com.oea.online_exam_app.Repo.ExamSessionRepo;
 import com.oea.online_exam_app.Repo.ExamSubmissionRepo;
 import com.oea.online_exam_app.Repo.PassingCriteriaRepo;
 import com.oea.online_exam_app.Repo.ProgrammingSubmissionRepo;
@@ -81,6 +82,8 @@ import com.oea.online_exam_app.Services.ExamSubmissionService;
 import com.oea.online_exam_app.Services.ProgrammingSubmissionService;
 import com.oea.online_exam_app.Services.QuestionsSubmissionService;
 import com.oea.online_exam_app.Views.View;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -137,6 +140,9 @@ public class ExamController {
 
     @Autowired
     ProgrammingSubmissionRepo programmingSubmissionRepo;
+
+    @Autowired
+    ExamSessionRepo examSessionRepo;
 
     @PostMapping("/create")
     @Transactional
@@ -313,7 +319,7 @@ public class ExamController {
 
     @PostMapping("/getExamQuestions")
     @Transactional
-    public ResponseEntity<GetExamQuestionsResponse> getExamsQuestions(@RequestBody GetExamQuestionsRequest request) {
+    public ResponseEntity<GetExamQuestionsResponse> getExamsQuestions(@RequestBody GetExamQuestionsRequest request,HttpServletRequest httpServletRequest) {
         try {
             String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             System.out.println(email);
@@ -321,7 +327,7 @@ public class ExamController {
             Exam exam = examRepo.findByExamCode(request.getExamCode())
                     .orElseThrow(() -> new IllegalArgumentException(ExamStatusCodeEnum.InvalidCode.name()));
 
-            QuestionsDTO questions = examService.getExamQuestions(exam, user);
+            QuestionsDTO questions = examService.getExamQuestions(exam, user,httpServletRequest.getRemoteAddr(),request.getDeviceFingerprint());
             ExamSubmission examSubmission = examSubmissionRepo.findByUserAndExam(user, exam);
             if (examSubmission.getScoredMarks() != 0) {
                 GetExamQuestionsResponse getExamQuestionsResponse = new GetExamQuestionsResponse(
@@ -329,20 +335,17 @@ public class ExamController {
                         ExamStatusCodeEnum.AlreadySubmitted.getCode());
                 return ResponseEntity.status(200).body(getExamQuestionsResponse);
             }
-            LocalTime nowTime = LocalTime.now();
-            LocalTime examStartTime = examSubmission.getExamStartTime().toLocalTime();
-            LocalTime examEndTime = examSubmission.getExamEndTime().toLocalTime();
-            System.out.println("examStartTime : " + examStartTime);
-            System.out.println("examEndTime : " + examEndTime);
-            System.out.println("nowTime : " + nowTime);
-            if (examEndTime.isBefore(nowTime)) {
+            LocalDateTime nowDateTime = LocalDateTime.now();
+            LocalDateTime examStartDateTime = examSubmission.getExamStartTime();
+            LocalDateTime examEndDateTime = examSubmission.getExamEndTime();
+            if (examEndDateTime.isBefore(nowDateTime)) {
                 GetExamQuestionsResponse getExamQuestionsResponse = new GetExamQuestionsResponse(
                         ExamStatusCodeEnum.Timeout.name(), "Exam Time Over", -1, null, -1, -1,
                         ExamStatusCodeEnum.Timeout.getCode());
                 return ResponseEntity.status(200).body(getExamQuestionsResponse);
             }
-            int remainingTime = (int) Duration.between(nowTime, examEndTime).toMinutes();
-            int totalTime = (int) Duration.between(examStartTime, examEndTime).toMinutes();
+            int remainingTime = (int) Duration.between(nowDateTime, examEndDateTime).toMinutes();
+            int totalTime = (int) Duration.between(examStartDateTime, examEndDateTime).toMinutes();
             if (!questions.getQuestionsMCQ().isEmpty() || !questions.getQuestionsPro().isEmpty()) {
                 GetExamQuestionsResponse getExamQuestionsResponse = new GetExamQuestionsResponse(
                         ExamStatusCodeEnum.InProgress.name(), "OK", examSubmission.getExamSubmissionId(), questions,
@@ -370,7 +373,7 @@ public class ExamController {
 
     @PostMapping("/getExamStatus")
     @Transactional
-    public ResponseEntity<GetExamStatusResponse> getExamStatus(@RequestBody GetExamStatusRequest request) {
+    public ResponseEntity<GetExamStatusResponse> getExamStatus(@RequestBody GetExamStatusRequest request, HttpServletRequest httpServletRequest) {
         try {
             String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             System.out.println(email);
@@ -408,6 +411,18 @@ public class ExamController {
                             ExamStatusCodeEnum.AlreadySubmitted.getCode());
                     return ResponseEntity.status(200).body(getExamStatus);
                 }
+                // needs better alternative for managing device fingerprint
+                // ExamSession examSession = examSubmission.getExamSession();
+                // if(examSession == null){
+                //     GetExamStatusResponse getExamStatus = new GetExamStatusResponse(ExamStatusCodeEnum.ServerError.name(),
+                //             "Exam Session Error", ExamStatusCodeEnum.ServerError.getCode());
+                //     return ResponseEntity.status(200).body(getExamStatus);
+                // }
+                // if(!examSession.getDeviceFingerprint().equals(request.getDeviceFingerprint())){
+                //     GetExamStatusResponse getExamStatus = new GetExamStatusResponse(ExamStatusCodeEnum.DeviceChanged.name(),
+                //             "Device Changed", ExamStatusCodeEnum.DeviceChanged.getCode());
+                //     return ResponseEntity.status(200).body(getExamStatus);
+                // }
                 LocalDateTime nowTime = LocalDateTime.now();
                 LocalDateTime examStartedEndTime = examSubmission.getExamEndTime();
                 System.out.println("examStartTime : " + examStartTime);
@@ -450,10 +465,13 @@ public class ExamController {
             BaseResponse getExamQuestionsResponse = new BaseResponse("success", "OK");
             return ResponseEntity.status(200).body(getExamQuestionsResponse);
         } catch (Exception e) {
+            System.out.println(e);
             BaseResponse getExamQuestionsResponse = new BaseResponse("failed", "Error " + e.toString());
             return ResponseEntity.status(200).body(getExamQuestionsResponse);
         }
     }
+
+
 
     @PostMapping("/submitProgrammingQuestion")
     @Transactional

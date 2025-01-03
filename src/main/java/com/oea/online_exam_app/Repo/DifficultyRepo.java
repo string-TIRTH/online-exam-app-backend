@@ -20,7 +20,7 @@ import com.oea.online_exam_app.Models.Difficulty;
  */
 @Repository
 public interface DifficultyRepo extends JpaRepository<Difficulty, Integer> {
-    Optional<Difficulty> findById(int difficutlyId);
+    Optional<Difficulty> findById(Integer difficutlyId);
     Optional<Difficulty> findByDifficultyText(String difficultyText);
     @Query(value = "SELECT * FROM difficulty_master ORDER BY difficulty_id OFFSET :skip ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
     List<Difficulty> getDifficultyList(int limit,int skip);

@@ -8,6 +8,7 @@ package com.oea.online_exam_app.Models;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,6 +32,12 @@ public class Question {
     private int questionId;
      
     private String questionText;
+
+    @Column(name = "image_url", nullable=true)
+    private String imageUrl;
+
+    @Column(name = "is_image", nullable=false)
+    private Boolean isImage = false;
 
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "categoryId", nullable = false) 

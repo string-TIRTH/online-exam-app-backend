@@ -30,8 +30,6 @@ public class QuestionOption {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer optionId;
 
-
-
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "question_id", referencedColumnName = "questionId", nullable = false)
@@ -42,11 +40,15 @@ public class QuestionOption {
     @Column(name = "is_correct")
     private Boolean isCorrect;
 
+    @Column(name = "is_image")
+    private Boolean isImage;
+
     public QuestionOption(){}
 
-    public QuestionOption(String optionText,Boolean isCorrect,Question question){
+    public QuestionOption(String optionText,Boolean isCorrect,Question question,Boolean isImage) {
         this.optionText = optionText;
         this.isCorrect = isCorrect;
         this.question = question;
+        this.isImage = isImage;
     }
 }

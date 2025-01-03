@@ -46,7 +46,7 @@ public class CategoryService implements ICategoryService{
     }
 
     @Override
-    public int updateCategory(Category category,int categoryId) {
+    public int updateCategory(Category category,Integer categoryId) {
        try {
             Category existingCategory = categoryRepo.findById(categoryId).orElseThrow(() ->new IllegalArgumentException("Invalid categoryId"));
             if (existingCategory != null) {
@@ -62,7 +62,7 @@ public class CategoryService implements ICategoryService{
     }
 
     @Override
-    public int deleteCategory(int categoryId) {
+    public int deleteCategory(Integer categoryId) {
         try {
             if (categoryRepo.existsById(categoryId)) {
                 categoryRepo.deleteById(categoryId);

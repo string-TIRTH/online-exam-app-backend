@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -169,11 +168,14 @@ public class QuestionController {
 
     }
 
-    @PostMapping("/create/bulk")
+    @PostMapping("/create/csv")
     @Transactional
-    public ResponseEntity<CreateQuestionResponse> createQuestion(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<CreateQuestionResponse> createQuestion(MultipartFile file) {
         try {
-            if (file.isEmpty()) {
+            System.out.println("file");
+            System.out.println(file);
+            if (file == null || file.isEmpty()) {
+                System.out.println("Please upload a CSV file");
                 return ResponseEntity.status(400)
                         .body(new CreateQuestionResponse("failed", "Please upload a CSV file"));
             }

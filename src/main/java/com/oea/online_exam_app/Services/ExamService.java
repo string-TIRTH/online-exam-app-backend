@@ -26,6 +26,7 @@ import com.oea.online_exam_app.Enums.QuestionSubmissionStatusEnum;
 import com.oea.online_exam_app.Enums.QuestionTypeEnum;
 import com.oea.online_exam_app.IServices.IExamService;
 import com.oea.online_exam_app.Models.Exam;
+import com.oea.online_exam_app.Models.ExamSession;
 import com.oea.online_exam_app.Models.ExamStatus;
 import com.oea.online_exam_app.Models.ExamSubmission;
 import com.oea.online_exam_app.Models.PassingCriteria;
@@ -37,6 +38,7 @@ import com.oea.online_exam_app.Models.QuestionType;
 import com.oea.online_exam_app.Models.User;
 import com.oea.online_exam_app.Repo.ExamQuestionsRepo;
 import com.oea.online_exam_app.Repo.ExamRepo;
+import com.oea.online_exam_app.Repo.ExamSessionRepo;
 import com.oea.online_exam_app.Repo.ExamStatusRepo;
 import com.oea.online_exam_app.Repo.ExamSubmissionRepo;
 import com.oea.online_exam_app.Repo.ProgrammingSubmissionRepo;
@@ -71,6 +73,9 @@ public class ExamService implements IExamService {
 
     @Autowired
     private ExamStatusRepo examStatusRepo;
+
+    @Autowired
+    private ExamSessionRepo examSessionRepo;
 
 
     @Autowired
@@ -148,7 +153,7 @@ public class ExamService implements IExamService {
     }
 
     @Override
-    public QuestionsDTO getExamQuestions(Exam exam, User user) {
+    public QuestionsDTO getExamQuestions(Exam exam, User user,String ipAddress,String deviceFingerprint) {
         try {
             ExamSubmission examSubmissionExists = examSubmissionRepo.findByUserAndExam(user, exam);
             QuestionType mcq =  questionTypeRepo.findByQuestionTypeText(QuestionTypeEnum.MCQ.name()).orElseThrow(() -> new IllegalArgumentException("Invalid question type"));
@@ -156,6 +161,14 @@ public class ExamService implements IExamService {
             List<Question> mcqQuestionsRaw = examQuestionsRepo.findByExamIdAndQuestionTypeId(exam.getExamId(),mcq.getQuestionTypeId());
             List<Question> programmingQuestionsRaw = examQuestionsRepo.findByExamIdAndQuestionTypeId(exam.getExamId(),programming.getQuestionTypeId());
             if (examSubmissionExists != null) {
+                // needs better alternative for device fingerprint
+                // ExamSession examSessionExists = examSubmissionExists.getExamSession();
+                // if(examSessionExists == null){
+                //     return null;
+                // }
+                // if(!examSessionExists.getIpAddress().equals(ipAddress) || !examSessionExists.getDeviceFingerprint().equals(deviceFingerprint)){
+                //     throw new InvalidAttributesException("Invalid Device or IP Address");
+                // }
                 List<QuestionSubmission> mcqQuestions = questionSubmissionRepo.findByExamSubmissionAndUser(examSubmissionExists, user); 
                 List<ProgrammingSubmission> proQuestions = programmingSubmissionRepo.findByExamSubmissionAndUser(examSubmissionExists, user); 
                 List<QuestionsDTO.MCQQuestion> mcqDTOs = mcqQuestions.stream()
@@ -169,12 +182,14 @@ public class ExamService implements IExamService {
                 return new QuestionsDTO(mcqDTOs, programmingDTOs);
 
             }
+            ExamSession examSession = new ExamSession(user, ipAddress,deviceFingerprint, LocalDateTime.now()); 
+            examSessionRepo.save(examSession);
             ExamStatus examStatus = examStatusRepo.findByExamStatusText(ExamStatusEnum.InProgress.name());
             QuestionSubmissionStatus questionSubmissionStatus = QuestionSubmissionStatusRepo
                     .findByQuestionSubmissionStatusText(QuestionSubmissionStatusEnum.UnAttepted.name());
 
             ExamSubmission examSubmission = new ExamSubmission(
-                    exam, user, LocalDateTime.now(), LocalDateTime.now().plus(exam.getExamDurationInMinutes(),ChronoUnit.MINUTES), 0, examStatus);
+                    exam, user,examSession,LocalDateTime.now(),LocalDateTime.now().plus(exam.getExamDurationInMinutes(),ChronoUnit.MINUTES), 0, examStatus);
             examSubmissionRepo.save(examSubmission);
 
             List<QuestionSubmission> questionSubmissionsList = new ArrayList<>();
@@ -340,18 +355,14 @@ public class ExamService implements IExamService {
     
 
     public int calculateScoredMarks(int examSubmissionId){
-        // int totalScoredMarks = 0;
-
-        // For v1 
-        int totalMarks = questionSubmissionRepo.getCorrectSubmissions(examSubmissionId);
-        return totalMarks;
-
-        // For v2 
-        // List<QuestionSubmission> questions = questionSubmissionRepo.getCorrectSubmissions(examSubmissionId);
-        // for (QuestionSubmission question : questions) {
-        //     totalScoredMarks += question.getQuestion().getDifficulty().getDifficultyWeight(); //For V2 when there will be question as per difficulty 
-        // }
-        // return totalScoredMarks;
+        int totalScoredMarks = 0;
+        
+        questionSubmissionRepo.validateAnswers(examSubmissionId);
+        List<QuestionSubmission> questions = questionSubmissionRepo.getCorrectSubmissions(examSubmissionId);
+        for (QuestionSubmission question : questions) {
+            totalScoredMarks += question.getQuestion().getDifficulty().getDifficultyWeight();
+        }
+        return totalScoredMarks;
 
     }
     @Override

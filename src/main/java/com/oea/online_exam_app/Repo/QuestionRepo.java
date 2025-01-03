@@ -24,10 +24,10 @@ public interface QuestionRepo extends JpaRepository<Question, Integer>{
     int countByCategory(Category category); 
 
     @Query(value = "SELECT TOP (:limit) * FROM questions WHERE category_id = :categoryId AND question_type_id =:questionTypeId ORDER BY NEWID()", nativeQuery = true)
-    List<Question> findRandomMCQQuestionsByCategory(int categoryId,int limit, int questionTypeId);
+    List<Question> findRandomMCQQuestionsByCategory(Integer categoryId,int limit, Integer questionTypeId);
 
     @Query(value = "SELECT TOP (:limit) * FROM questions WHERE difficulty_id = :difficultyId AND question_type_id =:questionTypeId ORDER BY NEWID()", nativeQuery = true)
-    List<Question> findRandomProQuestionsByDifficulty(int difficultyId,int limit, int questionTypeId);
+    List<Question> findRandomProQuestionsByDifficulty(Integer difficultyId,int limit, Integer questionTypeId);
 
     @Query(value = "SELECT * FROM questions ORDER BY question_id OFFSET :skip ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
     List<Question> getQuestionList(int limit,int skip);

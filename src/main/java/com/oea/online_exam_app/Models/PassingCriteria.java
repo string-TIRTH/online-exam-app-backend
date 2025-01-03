@@ -25,8 +25,8 @@ import lombok.NoArgsConstructor;
 public class PassingCriteria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "passing_criteria_id")
-    private int passingCriteriaId;
+    @Column(columnDefinition= "TINYINT")
+    private Integer passingCriteriaId;
 
     @Column(name = "passing_criteria_text", nullable = false)
     private String passingCriteriaText;

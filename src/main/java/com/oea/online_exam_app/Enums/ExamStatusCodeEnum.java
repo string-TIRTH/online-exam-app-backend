@@ -16,7 +16,8 @@ public enum ExamStatusCodeEnum {
     SomeThingWentWrong(4),
     ServerError(5),
     InvalidCode(6),
-    NotStarted(7);
+    NotStarted(7),
+    DeviceChanged(8);
     private final int code;
 
     ExamStatusCodeEnum(int code) {

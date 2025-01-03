@@ -18,4 +18,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class GetExamQuestionsRequest {
     private String examCode;
+    private String deviceFingerprint;
 }

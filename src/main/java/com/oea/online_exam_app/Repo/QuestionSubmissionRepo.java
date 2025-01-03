@@ -35,8 +35,14 @@ public interface QuestionSubmissionRepo extends JpaRepository<QuestionSubmission
     
     @Modifying
     @Query(value = "UPDATE qs SET qs.is_correct = 1 FROM question_submission qs JOIN question_options qo ON qs.selected_option_id = qo.option_id WHERE qo.is_correct = 1 AND qs.exam_submission_id = :examSubmissionId", nativeQuery = true)
-    public int getCorrectSubmissions(int examSubmissionId); 
+    public int validateAnswers(int examSubmissionId); 
     
+    @Query(value = "SELECT * FROM question_submission WHERE exam_submission_id = :examSubmissionId AND is_correct = 1", nativeQuery = true)
+    List<QuestionSubmission> getCorrectSubmissions(int examSubmissionId);
+
+    @Query(value = "SELECT COUNT(*) FROM question_submission WHERE exam_submission_id = :examSubmissionId AND is_correct = 1", nativeQuery = true)
+    long getCorrectSubmissionCount(int examSubmissionId);
+
 
     @Modifying
     @Transactional

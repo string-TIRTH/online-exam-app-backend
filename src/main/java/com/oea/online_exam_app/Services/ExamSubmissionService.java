@@ -17,6 +17,7 @@ import com.oea.online_exam_app.IServices.IExamSubmissionService;
 import com.oea.online_exam_app.Models.ExamSubmission;
 import com.oea.online_exam_app.Repo.ExamSubmissionRepo;
 import com.oea.online_exam_app.Repo.ProgrammingSubmissionRepo;
+import com.oea.online_exam_app.Repo.QuestionSubmissionRepo;
 
 /**
  *
@@ -27,6 +28,8 @@ public class ExamSubmissionService implements IExamSubmissionService{
 
      @Autowired
     private ExamSubmissionRepo examSubmissionRepo;
+     @Autowired
+    private QuestionSubmissionRepo questionSubmissionRepo;
      @Autowired
     private ProgrammingSubmissionRepo programmingSubmissionRepo;
 
@@ -85,8 +88,10 @@ public class ExamSubmissionService implements IExamSubmissionService{
                 examSubmissions = examSubmissionRepo.getExamSubmissionListWithSearch(examId,limit,offset,search);
             }
             for (ExamSubmission examSub : examSubmissions) {
+                
                 long correctCode = programmingSubmissionRepo.getCorrectSubmissionCount(examSub.getExamSubmissionId());
-                examSubmissionDTOs.add(new ExamSubmissionDTO(examSub.getExamSubmissionId(),examSub.getUser().getFullName(),examSub.getUser().getEmail(),examSub.getScoredMarks(),(int) correctCode,(int) Duration.between(examSub.getExamStartTime(),examSub.getExamEndTime()).toMinutes()));
+                long correctMcq = questionSubmissionRepo.getCorrectSubmissionCount(examSub.getExamSubmissionId());
+                examSubmissionDTOs.add(new ExamSubmissionDTO(examSub.getExamSubmissionId(),examSub.getUser().getFullName(),examSub.getUser().getEmail(),examSub.getScoredMarks(),(int)correctMcq,(int) correctCode,(int) Duration.between(examSub.getExamStartTime(),examSub.getExamEndTime()).toMinutes()));
             }
             return examSubmissionDTOs;
         } catch (Exception e) {

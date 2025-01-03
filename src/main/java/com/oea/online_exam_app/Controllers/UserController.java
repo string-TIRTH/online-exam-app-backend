@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -73,8 +72,9 @@ public class UserController {
 
     @SuppressWarnings("deprecation")
     @PostMapping("student/register/csv")
-    public ResponseEntity<String> registerStudents(@RequestParam("file") MultipartFile file) {
-        if (file.isEmpty()) {
+    public ResponseEntity<String> registerStudents(MultipartFile file) {
+        if (file==null || file.isEmpty()) {
+            System.out.println("Please upload a CSV file.");
             return ResponseEntity.badRequest().body("Please upload a CSV file.");
         }
         List<User> students = new ArrayList<>();

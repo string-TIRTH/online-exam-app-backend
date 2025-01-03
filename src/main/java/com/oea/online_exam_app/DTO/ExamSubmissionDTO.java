@@ -21,6 +21,7 @@ public class ExamSubmissionDTO {
     private String studentName;
     private String studentEmail;
     private int scoredMarks;
+    private int correctMcq;
     private int correctCodeSubmission;
     private int completedInMinutes;
 }

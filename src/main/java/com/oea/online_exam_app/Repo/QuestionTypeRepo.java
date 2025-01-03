@@ -21,7 +21,8 @@ import com.oea.online_exam_app.Models.QuestionType;
  */
 @Repository
 public interface QuestionTypeRepo extends JpaRepository<QuestionType, Integer> {
-    Optional<QuestionType> findById(int questionTypeId);
+    @Override
+    Optional<QuestionType> findById(Integer questionTypeId);
     Optional<QuestionType> findByQuestionTypeText(String questionTypeText);
     @Query(value = "SELECT * FROM question_type_master ORDER BY question_type_id OFFSET :skip ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
     List<QuestionType> getQuestionTypeList(int limit,int skip);

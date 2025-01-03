@@ -5,33 +5,33 @@
 
 package com.oea.online_exam_app.Models;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  *
  * @author tirth
  */
 @Entity
-@Table(name = "exam_status_master")
+@Table(name="logs")
 @Data
-@NoArgsConstructor
-public class ExamStatus {
+public class Logs {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition= "TINYINT")
-    private Integer examStatusId;
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private int logId;
+    private String action;
+    private String email;
+    private Boolean isSuccess;
 
-    @Column(name = "exam_status_text", nullable = false)
-    private String examStatusText;
+    public Logs(){}
 
-    public ExamStatus(String examStatusText) {
-        this.examStatusText = examStatusText;
+    public Logs(String action, String email, Boolean isSuccess){
+        this.action = action;
+        this.email = email;
+        this.isSuccess = isSuccess;
     }
 }

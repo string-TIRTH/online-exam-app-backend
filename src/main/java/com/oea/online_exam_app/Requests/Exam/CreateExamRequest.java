@@ -38,7 +38,7 @@ public class CreateExamRequest {
     @AllArgsConstructor
     @NoArgsConstructor
     static public class QuestionsMCQ{
-        private int categoryId;
+        private Integer categoryId;
         private int noOfQuestions;
     }
 
@@ -46,7 +46,7 @@ public class CreateExamRequest {
     @AllArgsConstructor
     @NoArgsConstructor
     static public class QuestionsPro{
-        private int difficultyId;
+        private Integer difficultyId;
         private int noOfQuestions;
     }
 }

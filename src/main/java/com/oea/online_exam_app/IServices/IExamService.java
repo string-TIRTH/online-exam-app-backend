@@ -22,7 +22,7 @@ public interface IExamService {
     public int deleteExam(int examId);
     public Exam getExamById(int examId);
     public List<Exam> getAllExams(int page,int limit);
-    public QuestionsDTO getExamQuestions(Exam exam,User user);
+    public QuestionsDTO getExamQuestions(Exam exam, User user,String ipAddress,String macAddress);
     public int submitCode(int programmingSubmissionId,String code);
     public int submitExam(int examSubmissionId);
     public List<Exam> getExams(int page,int limit,String search);

@@ -21,7 +21,7 @@ import com.oea.online_exam_app.Models.Category;
  */
 @Repository
 public interface CategoryRepo extends JpaRepository<Category, Integer> {
-    Optional<Category> findById(int id);
+    Optional<Category> findById(Integer id);
     Optional<Category> findByCategoryText(String categoryText);
     @Query(value = "SELECT * FROM category_master ORDER BY category_id OFFSET :skip ROWS FETCH NEXT :limit ROWS ONLY", nativeQuery = true)
     List<Category> getCategoryList(int limit,int skip);

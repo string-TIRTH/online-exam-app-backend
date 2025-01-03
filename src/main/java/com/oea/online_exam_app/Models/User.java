@@ -4,8 +4,6 @@
  */
 
 package com.oea.online_exam_app.Models;
-import java.time.LocalDate;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,9 +34,6 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "role_id",referencedColumnName = "roleId", nullable = false) 
     private Role role;  
-
-    private LocalDate createdAt = LocalDate.now();
-    private LocalDate updatedAt = LocalDate.now();
 
     public User() {}
 

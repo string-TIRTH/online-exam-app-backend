@@ -41,6 +41,10 @@ public class ExamSubmission {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "exam_session_id", nullable = false)
+    private ExamSession examSession;
+
     private LocalDateTime examStartTime;
 
     @Column(name = "exam_end_time", nullable = true)
@@ -53,9 +57,10 @@ public class ExamSubmission {
     @JoinColumn(name = "exam_status_id", nullable = false)
     private ExamStatus examStatus;
 
-    public ExamSubmission(Exam exam, User user, LocalDateTime examStartTime, LocalDateTime examEndTime, int scoredMarks, ExamStatus examStatus) {
+    public ExamSubmission(Exam exam, User user, ExamSession examSession,LocalDateTime examStartTime, LocalDateTime examEndTime, int scoredMarks, ExamStatus examStatus) {
         this.exam = exam;
         this.user = user;
+        this.examSession = examSession;
         this.examStartTime = examStartTime;
         this.examEndTime = examEndTime;
         this.scoredMarks = scoredMarks;
