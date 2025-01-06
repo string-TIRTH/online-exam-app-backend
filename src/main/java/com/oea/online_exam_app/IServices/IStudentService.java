@@ -18,4 +18,5 @@ public interface IStudentService {
     public int registerStudents(List<User> students);
     public int updateStudent(User student,int userId);
     public int deleteStudent(int userId);
+    public List<User> getStudents(int page,int limit,String search,int roleId);
 }

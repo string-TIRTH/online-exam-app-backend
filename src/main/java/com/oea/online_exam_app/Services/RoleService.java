@@ -66,4 +66,22 @@ public class RoleService implements IRoleService {
     public List<Role> getAllRoles() {
         return roleRepo.findAll();
     }
+
+    @Override
+    public List<Role> getRoles(int page,int limit,String search) {
+        try {
+            int offset = (page - 1) * limit;
+            List<Role> roles;
+            if(search.trim().isBlank()){
+                roles = roleRepo.getRoleList(limit,offset);
+
+            }else{
+                roles = roleRepo.getRoleListWithSearch(limit,offset,search);
+            }
+            return roles;
+        } catch (Exception e) {
+            System.out.println(e.getCause());
+            return null;
+        }
+    }
 }

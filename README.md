@@ -1,5 +1,5 @@
-# Online Exam Application
-
+# Online Exam Application (V2)
+## [React App](https://github.com/string-TIRTH/online-exam-app/tree/V2)
 ## Overview
 The **Online Exam Application** is a application for conducting online exams, including multiple-choice questions (MCQs) and programming-based questions. This Spring Boot-based application supports role-based access for aDmins, examiners, and students.
 
@@ -9,9 +9,9 @@ Follow these steps to set up the database:
 
 ### Step 1: Create the Database
 ```sql
-CREATE DATABASE online_exam_app_v1;
+CREATE DATABASE online_exam_app_v2;
 GO
-USE online_exam_app_v1;
+USE online_exam_app_v2;
 GO
 ```
 
@@ -20,7 +20,7 @@ Run the following SQL scripts to populate the master tables:
 
 #### Run following queries
 ```sql
-USE online_exam_app_v1;
+USE online_exam_app_v2;
 GO
 SET IDENTITY_INSERT difficulty_master ON;
 
@@ -189,9 +189,9 @@ SET IDENTITY_INSERT exam_questions OFF
 
 ### Step 3: Update application.properties file (ref. applicationExample.properties)
 
-You can find an example of the `application.properties` file configuration in the [applicationExample.properties](https://github.com/string-TIRTH/online-exam-app-backend/blob/V1/src/main/resources/applicationExample.properties) file.
+You can find an example of the `application.properties` file configuration in the [applicationExample.properties](https://github.com/string-TIRTH/online-exam-app-backend/blob/V2/src/main/resources/applicationExample.properties) file.
 
-Replace `https://github.com/string-TIRTH/online-exam-app-backend/blob/V1/src/main/resources/applicationExample.properties` with the actual path or URL to the file in your repository.
+Replace `https://github.com/string-TIRTH/online-exam-app-backend/blob/V2/src/main/resources/applicationExample.properties` with the actual path or URL to the file in your repository.
 
 
 ## Running the Application
@@ -228,5 +228,6 @@ Replace `https://github.com/string-TIRTH/online-exam-app-backend/blob/V1/src/mai
 | Student    | user@student.com     | admin    |
 | Admin      | user@admin.com       | admin    |
 | Examiner   | user@examiner.com    | admin    |
+
 
 

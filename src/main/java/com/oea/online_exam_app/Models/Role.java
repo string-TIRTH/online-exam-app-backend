@@ -5,6 +5,7 @@
 
 package com.oea.online_exam_app.Models;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,7 +23,8 @@ import lombok.Data;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
-    private int roleId;
+    @Column(columnDefinition= "TINYINT")
+    private Integer roleId;
 
     private String role;
 

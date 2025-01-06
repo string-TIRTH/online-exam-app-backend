@@ -4,8 +4,6 @@
  */
 
 package com.oea.online_exam_app.Models;
-import java.time.LocalDate;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,21 +32,15 @@ public class User {
     private String password;
 
     @ManyToOne
-    @JoinColumn(name = "role_id", referencedColumnName = "roleId", nullable = false) 
+    @JoinColumn(name = "role_id",referencedColumnName = "roleId", nullable = false) 
     private Role role;  
-
-    private LocalDate createdAt = LocalDate.now();
-    private LocalDate updatedAt = LocalDate.now();
 
     public User() {}
 
-    public User(String fullName, String mobileNumber, String email, String password, Role role, LocalDate createdAt, LocalDate updatedAt) {
+    public User(String fullName, String mobileNumber, String email, String password) {
         this.fullName = fullName;
         this.mobileNumber = mobileNumber;
         this.email = email;
         this.password = password;
-        this.role = role;
-        this.createdAt = (createdAt != null) ? createdAt : LocalDate.now();
-        this.updatedAt = (updatedAt != null) ? updatedAt : LocalDate.now();
     }
 }
